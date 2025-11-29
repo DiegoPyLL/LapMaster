@@ -1,0 +1,6 @@
+<resources>
+    <!-- Usamos un tema ligero sin ActionBar; la UI real se maneja en Compose -->
+    <style name="Theme.RacingCrono" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+</resources>
