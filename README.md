@@ -21,10 +21,14 @@ App móvil Android (Jetpack Compose) para tomar tiempos de pista de varios pilot
 3) Ejecuta desde Android Studio abriendo el módulo `app/`.
 
 ## Próximos pasos (pendientes)
-- Conectar datos reales de clima/GPS y cronometraje.
+- Conectar datos reales de clima/GPS utilizando una Api de clima chilena y libre de restricciones.
+Esta debe ser rápida y gratis. https://openweathermap.org/api/one-call-3#how
+- Cronometraje.
 - Persistir pilotos/sesiones (Room) y servicio en primer plano.
 - Edición de piloto (nombre/número/color) y selección de piloto para sectores.
 - Animaciones
+- Implementar API de Ubicación Nativa
+- API de traducción
 
 Diseño de referencia (Figma):  
 https://www.figma.com/design/hHHBmt2PhofI3f03KKJ0MD/Multicron%C3%B3metro-Racing?node-id=1-2&p=f&t=9yh1ywg0UXCzVq6u-0
