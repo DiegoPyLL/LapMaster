@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.racingcrono.app-mergeDebugResources-44:/values-ar/values-ar.xml",
+            "outputFile": "com.lapmaster.app-mergeDebugResources-44:/values-ar/values-ar.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Diego\\.gradle\\caches\\9.0-milestone-1\\transforms\\0af5b3e816b6316a358af00d91fc65e6\\transformed\\core-1.12.0\\res\\values-ar\\values-ar.xml",

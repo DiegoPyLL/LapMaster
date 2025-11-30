@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.racingcrono.app-mergeDebugResources-44:/values-lt/values-lt.xml",
+            "outputFile": "com.lapmaster.app-mergeDebugResources-44:/values-lt/values-lt.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Diego\\.gradle\\caches\\9.0-milestone-1\\transforms\\74645ca7f8d268894ad1cea019811c07\\transformed\\jetified-ui-release\\res\\values-lt\\values-lt.xml",

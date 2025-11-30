@@ -1,4 +1,4 @@
-# RacingCrono
+# LapMaster
 
 App móvil Android (Jetpack Compose) para tomar tiempos de pista de varios pilotos desde una sola pantalla, incluyendo laps y sectores, con clima/GPS y modo claro/oscuro.
 
@@ -11,9 +11,9 @@ App móvil Android (Jetpack Compose) para tomar tiempos de pista de varios pilot
 - Navegación superior en pestañas.
 
 ## Estructura y stack
-- Namespace/appId: `com.racingcrono`.
+- Namespace/appId: `com.lapmaster`.
 - Compose + Material3, ViewModel + StateFlow (MVVM).
-- Temas claro/oscuro (`RacingCronoTheme`), colores de alto contraste.
+- Temas claro/oscuro (`LapMasterTheme`), colores de alto contraste.
 
 ## Cómo correr
 1) Configura `JAVA_HOME` a un JDK 17.
@@ -24,6 +24,7 @@ App móvil Android (Jetpack Compose) para tomar tiempos de pista de varios pilot
 - Conectar datos reales de clima/GPS y cronometraje.
 - Persistir pilotos/sesiones (Room) y servicio en primer plano.
 - Edición de piloto (nombre/número/color) y selección de piloto para sectores.
+- Animaciones
 
 Diseño de referencia (Figma):  
 https://www.figma.com/design/hHHBmt2PhofI3f03KKJ0MD/Multicron%C3%B3metro-Racing?node-id=1-2&p=f&t=9yh1ywg0UXCzVq6u-0

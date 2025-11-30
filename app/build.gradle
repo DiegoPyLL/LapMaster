@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace "com.racingcrono"
+    namespace "com.lapmaster"
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.racingcrono"
+        applicationId "com.lapmaster"
         minSdk 24
         targetSdk 34
         versionCode 1
