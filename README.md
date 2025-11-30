@@ -10,25 +10,43 @@ App móvil Android (Jetpack Compose) para tomar tiempos de pista de varios pilot
 - Configuración rápida: tema claro/oscuro, layout zurdo/diestro, orientación (info).
 - Navegación superior en pestañas.
 
+
+
 ## Estructura y stack
 - Namespace/appId: `com.lapmaster`.
 - Compose + Material3, ViewModel + StateFlow (MVVM).
-- Temas claro/oscuro (`LapMasterTheme`), colores de alto contraste.
+- Temas claro/oscuro (`TemaLapMaster`), colores de alto contraste.
+
+
 
 ## Cómo correr
 1) Configura `JAVA_HOME` a un JDK 17.
 2) Sincroniza/compila: `./gradlew assembleDebug` (descarga dependencias la primera vez).
 3) Ejecuta desde Android Studio abriendo el módulo `app/`.
 
+
+
 ## Próximos pasos (pendientes)
 - Conectar datos reales de clima/GPS utilizando una Api de clima chilena y libre de restricciones.
-Esta debe ser rápida y gratis. https://openweathermap.org/api/one-call-3#how
+Esta debe ser rápida y gratis. https://openweathermap.org/current
 - Cronometraje.
 - Persistir pilotos/sesiones (Room) y servicio en primer plano.
 - Edición de piloto (nombre/número/color) y selección de piloto para sectores.
 - Animaciones
 - Implementar API de Ubicación Nativa
-- API de traducción
+- API de traducción. Puede ser ML Kit Translation (on-device)
+- Poder poner un Idioma personalizado
+- Investigar necesidades y responsabilidades legales
+- Seguridad del usuario
+- Publicidad?
+- Licencia y firma
+- Ver contrato PlayStore
+- La app debe funcionar sin internet
+- Amplia compatibilidad con teléfonos android antiguos, revisar que version es mejor
+
+
+
+## Referencias
 
 Diseño de referencia (Figma):  
 https://www.figma.com/design/hHHBmt2PhofI3f03KKJ0MD/Multicron%C3%B3metro-Racing?node-id=1-2&p=f&t=9yh1ywg0UXCzVq6u-0

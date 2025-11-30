@@ -1,0 +1,82 @@
+[
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xhdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xhdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xxxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xxxhdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.lapmaster.app-merged_res-46:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.lapmaster.app-main-48:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-mdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-mdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-hdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-mdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-mdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\drawable_image.png.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\drawable\\image.png"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xxhdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xxxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-hdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-hdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.lapmaster.app-merged_res-46:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.lapmaster.app-main-48:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-merged_res-46:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Laptop\\.gradle\\daemon\\9.0-milestone-1\\com.lapmaster.app-main-48:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    }
+]
