@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="com.lapmaster.ui.components.BannerClimaTest" tests="3" failures="0" errors="0" skipped="0" time="8.889" timestamp="2025-12-01T18:13:48" hostname="localhost">
+  <properties>
+    <property name="device" value="Pixel_8(AVD) - 16" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="showsHumidityPlaceholderWhenGpsIsOff" classname="com.lapmaster.ui.components.BannerClimaTest" time="3.613" />
+  <testcase name="showsAllKeyMetricsAndTexts" classname="com.lapmaster.ui.components.BannerClimaTest" time="1.611" />
+  <testcase name="showsHumidityValueWhenGpsHasFix" classname="com.lapmaster.ui.components.BannerClimaTest" time="2.488" />
+</testsuite>

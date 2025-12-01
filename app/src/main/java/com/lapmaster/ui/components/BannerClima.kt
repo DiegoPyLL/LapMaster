@@ -12,13 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Air
 import androidx.compose.material.icons.outlined.Cloud
@@ -59,10 +55,9 @@ import kotlin.math.roundToInt
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.PI
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
 
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
 fun BannerClima(
     clima: ClimaUi,
     gps: GpsUi,
@@ -87,27 +82,28 @@ fun BannerClima(
             modifier = Modifier
                 .background(degradado)
                 .padding(vertical = 8.dp, horizontal = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            EstadoGps(gps)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    EstadoGps(gps)
                     EncabezadoClima(clima = clima)
+                    TemperaturaActual(
+                        clima,
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .padding(start = 10.dp)
+                    )
                 }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TemperaturaActual(clima, modifier = Modifier.weight(1f))
                 BrujulaViento(
                     grados = clima.direccionVientoGrados,
                     etiqueta = clima.direccionViento,
@@ -115,30 +111,44 @@ fun BannerClima(
                     tamano = 84.dp
                 )
             }
-            FlowRow(
+            val metricaEspaciado = 6.dp
+            val humedadValor = if (gps.tieneFijacion) "${clima.humedad}%" else "--"
+            val metricasGrid = listOf(
+                MetricaClimaItem(Icons.Outlined.WaterDrop, "Humedad del Aire", humedadValor),
+                MetricaClimaItem(Icons.Outlined.Air, "Velocidad del Viento", vientoVelocidadTexto(clima)),
+                MetricaClimaItem(Icons.Outlined.Speed, "Presión Atmosférica", clima.presion),
+                MetricaClimaItem(Icons.Outlined.Cloud, "Nubosidad", clima.nubosidad)
+            )
+            val metricaLluvia = MetricaClimaItem(Icons.Outlined.WaterDrop, "Lluvia", clima.lluvia)
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-                maxItemsInEachRow = 2
+                horizontalArrangement = Arrangement.spacedBy(metricaEspaciado)
             ) {
-                listOf(
-                    MetricaClimaItem(Icons.Outlined.WaterDrop, "Humedad", "${clima.humedad}%"),
-                    MetricaClimaItem(Icons.Outlined.Air, "Viento", vientoVelocidadTexto(clima)),
-                    MetricaClimaItem(Icons.Outlined.Speed, "Presión", clima.presion),
-                    MetricaClimaItem(Icons.Outlined.Cloud, "Nubosidad", clima.nubosidad),
-                    MetricaClimaItem(Icons.Outlined.WaterDrop, "Lluvia", clima.lluvia)
-                ).forEach { item ->
-                    MetricaClima(
-                        item,
-                        modifier = Modifier
-                            .weight(1f, fill = false)
-                            .fillMaxWidth()
-                    )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(metricaEspaciado)
+                ) {
+                    metricasGrid.filterIndexed { index, _ -> index % 2 == 0 }
+                        .forEach { item ->
+                            MetricaClima(item, modifier = Modifier.fillMaxWidth())
+                        }
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(metricaEspaciado)
+                ) {
+                    metricasGrid.filterIndexed { index, _ -> index % 2 != 0 }
+                        .forEach { item ->
+                            MetricaClima(item, modifier = Modifier.fillMaxWidth())
+                        }
                 }
             }
+            MetricaClima(metricaLluvia, modifier = Modifier.fillMaxWidth())
         }
     }
 }
+
+
 
 @Composable
 private fun EncabezadoClima(clima: ClimaUi, modifier: Modifier = Modifier) {
@@ -158,14 +168,14 @@ private fun EncabezadoClima(clima: ClimaUi, modifier: Modifier = Modifier) {
             )
             Column(
                 modifier = Modifier
-                    .weight(1f, fill = false)
+                    .weight(1f)
                     .padding(end = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text(
                     text = clima.ubicacion.ifBlank { "Ubicación actual" },
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.White
                 )
@@ -185,7 +195,7 @@ private fun EncabezadoClima(clima: ClimaUi, modifier: Modifier = Modifier) {
 private fun TemperaturaActual(clima: ClimaUi, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Text(
             text = clima.temperatura.ifBlank { "--°C" },
@@ -259,11 +269,6 @@ private fun BrujulaViento(
                         end = destinoVector,
                         strokeWidth = 4.dp.toPx(),
                         cap = StrokeCap.Round
-                    )
-                    drawCircle(
-                        color = VerdeCarreras,
-                        radius = 6.dp.toPx(),
-                        center = destinoVector
                     )
                     // cabeza de flecha
                     val head = 12.dp.toPx()
@@ -345,7 +350,7 @@ private fun MetricaClimaFila(items: List<MetricaClimaItem>, compacto: Boolean) {
 @Composable
 private fun MetricaClima(item: MetricaClimaItem, modifier: Modifier = Modifier) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.heightIn(min = 64.dp),
         shape = RoundedCornerShape(12.dp),
         color = Color.White.copy(alpha = 0.05f),
         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.04f))
@@ -378,6 +383,9 @@ private fun MetricaClima(item: MetricaClimaItem, modifier: Modifier = Modifier) 
     }
 }
 
+
+
+
 @Composable
 private fun EstadoGps(gps: GpsUi) {
     val color = if (gps.tieneFijacion) VerdeCarreras else RojoCarreras
@@ -386,37 +394,43 @@ private fun EstadoGps(gps: GpsUi) {
     } else {
         "Sin señal"
     }
+
     Surface(
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(50),
         color = color.copy(alpha = 0.12f),
         border = BorderStroke(1.dp, color.copy(alpha = 0.6f))
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp),  // más espacio
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Outlined.GpsFixed,
                 contentDescription = null,
                 tint = color,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(20.dp)
             )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             Column {
                 Text(
-                    text = if (gps.tieneFijacion) "GPS listo" else "GPS sin señal",
+                    text = if (gps.tieneFijacion) "GPS listo. \nPresisión: $precision" else "GPS sin señal",
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White
-                )
-                Text(
-                    text = precision,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 12.sp),
-                    color = Color.White.copy(alpha = 0.78f)
                 )
             }
         }
     }
 }
+
+
+
+
+
 
 private data class MetricaClimaItem(
     val icono: ImageVector,
