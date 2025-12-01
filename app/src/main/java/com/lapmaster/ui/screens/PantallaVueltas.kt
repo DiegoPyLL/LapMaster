@@ -18,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +47,10 @@ fun PantallaVueltas(
     gps: GpsUi,
     resumen: ResumenUi,
     configuraciones: EstadoConfiguracionUi,
-    alAgregarPiloto: () -> Unit
+    alAgregarPiloto: () -> Unit,
+    alAlternarCronometro: (Int) -> Unit,
+    alMarcarVuelta: (Int) -> Unit,
+    alResetearCronometro: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -67,7 +71,10 @@ fun PantallaVueltas(
                     TarjetaVueltaPiloto(
                         vuelta = vuelta,
                         zurdo = configuraciones.preferenciaMano == PreferenciaMano.ZURDO,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        alAlternarCronometro = alAlternarCronometro,
+                        alMarcarVuelta = alMarcarVuelta,
+                        alResetearCronometro = alResetearCronometro
                     )
                     if (fila.size == 1) Spacer(modifier = Modifier.weight(1f))
                 }
@@ -96,6 +103,9 @@ fun PantallaVueltas(
 private fun TarjetaVueltaPiloto(
     vuelta: VueltaPilotoUi,
     zurdo: Boolean,
+    alAlternarCronometro: (Int) -> Unit,
+    alMarcarVuelta: (Int) -> Unit,
+    alResetearCronometro: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -113,8 +123,12 @@ private fun TarjetaVueltaPiloto(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             val boton = @Composable {
+                val enMarcha = vuelta.corriendo
+                val etiquetaBoton = if (enMarcha) "Marcar vuelta" else "Iniciar"
                 Button(
-                    onClick = { },
+                    onClick = {
+                        if (enMarcha) alMarcarVuelta(vuelta.piloto.id) else alAlternarCronometro(vuelta.piloto.id)
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(vuelta.piloto.color),
                         contentColor = Color.Black
@@ -146,7 +160,7 @@ private fun TarjetaVueltaPiloto(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = vuelta.tiempo,
+                            text = formatearTiempo(vuelta.tiempoMs),
                             fontSize = 30.sp,
                             fontFamily = FontFamily.Monospace,
                             color = MaterialTheme.colorScheme.onBackground
@@ -160,6 +174,18 @@ private fun TarjetaVueltaPiloto(
             } else {
                 cajaTiempo()
                 boton()
+            }
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextButton(onClick = { alAlternarCronometro(vuelta.piloto.id) }) {
+                Text(text = if (vuelta.corriendo) "Pausar" else "Continuar")
+            }
+            TextButton(onClick = { alResetearCronometro(vuelta.piloto.id) }) {
+                Text(text = "Resetear")
             }
         }
     }
@@ -183,4 +209,13 @@ private fun BotonAgregarPiloto(onAgregar: () -> Unit, habilitado: Boolean) {
     ) {
         Text(text = if (habilitado) "Agregar piloto" else "Límite de 4 pilotos", fontWeight = FontWeight.Bold)
     }
+}
+
+private fun formatearTiempo(ms: Long): String {
+    if (ms <= 0L) return "--:--.--"
+    val totalSegundos = ms / 1000
+    val minutos = totalSegundos / 60
+    val segundos = totalSegundos % 60
+    val centesimas = (ms % 1000) / 10
+    return String.format("%d:%02d.%02d", minutos, segundos, centesimas)
 }

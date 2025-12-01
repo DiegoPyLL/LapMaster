@@ -2,6 +2,11 @@ package com.lapmaster
 
 import android.Manifest
 import android.os.Bundle
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.view.Surface
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -50,6 +55,11 @@ private data class ElementoNavegacion(
 class ActividadPrincipal : ComponentActivity() {
     private val modeloVista: ModeloVistaLapMaster by viewModels()
     private lateinit var proveedorGps: ProveedorGpsNativo
+    private var sensorManager: SensorManager? = null
+    private var sensorRotacion: Sensor? = null
+    private val matrizRotacion = FloatArray(9)
+    private val matrizRotacionAjustada = FloatArray(9)
+    private val orientacion = FloatArray(3)
 
     private val permisosUbicacion = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -78,10 +88,21 @@ class ActividadPrincipal : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
         window.statusBarColor = android.graphics.Color.BLACK
         inicializarProveedorGps()
+        inicializarSensorBrjula()
         solicitarPermisoGpsSiEsNecesario()
         setContent {
             AplicacionLapMaster(modeloVista = modeloVista)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        registrarSensorBrjula()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager?.unregisterListener(listenerBrjula)
     }
 
     private fun inicializarProveedorGps() {
@@ -104,6 +125,60 @@ class ActividadPrincipal : ComponentActivity() {
             proveedorGps.iniciarSiPermiso()
         } else {
             solicitudPermisoGps.launch(permisosUbicacion)
+        }
+    }
+
+    private fun inicializarSensorBrjula() {
+        sensorManager = getSystemService(SensorManager::class.java)
+        sensorRotacion = sensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+    }
+
+    private fun registrarSensorBrjula() {
+        val manager = sensorManager ?: return
+        val sensor = sensorRotacion ?: return
+        manager.registerListener(
+            listenerBrjula,
+            sensor,
+            SensorManager.SENSOR_DELAY_UI
+        )
+    }
+
+    private val listenerBrjula = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            if (event.sensor.type != Sensor.TYPE_ROTATION_VECTOR) return
+            SensorManager.getRotationMatrixFromVector(matrizRotacion, event.values)
+            ajustarMatrizPorRotacionPantalla()
+            SensorManager.getOrientation(matrizRotacionAjustada, orientacion)
+            val azimutRad = orientacion[0]
+            val azimutDeg = Math.toDegrees(azimutRad.toDouble()).toFloat()
+            modeloVista.alActualizarRumbo(azimutDeg)
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+    }
+
+    private fun ajustarMatrizPorRotacionPantalla() {
+        val rotation = windowManager.defaultDisplay?.rotation ?: display?.rotation ?: Surface.ROTATION_0
+        when (rotation) {
+            Surface.ROTATION_90 -> SensorManager.remapCoordinateSystem(
+                matrizRotacion,
+                SensorManager.AXIS_Y,
+                SensorManager.AXIS_MINUS_X,
+                matrizRotacionAjustada
+            )
+            Surface.ROTATION_180 -> SensorManager.remapCoordinateSystem(
+                matrizRotacion,
+                SensorManager.AXIS_MINUS_X,
+                SensorManager.AXIS_MINUS_Y,
+                matrizRotacionAjustada
+            )
+            Surface.ROTATION_270 -> SensorManager.remapCoordinateSystem(
+                matrizRotacion,
+                SensorManager.AXIS_MINUS_Y,
+                SensorManager.AXIS_X,
+                matrizRotacionAjustada
+            )
+            else -> System.arraycopy(matrizRotacion, 0, matrizRotacionAjustada, 0, matrizRotacion.size)
         }
     }
 }
@@ -131,7 +206,10 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
                             gps = estadoUi.gps,
                             resumen = estadoUi.resumen,
                             configuraciones = estadoUi.configuraciones,
-                            alAgregarPiloto = { modeloVista.alAgregarPiloto() }
+                            alAgregarPiloto = { modeloVista.alAgregarPiloto() },
+                            alAlternarCronometro = { modeloVista.alAlternarCronometro(it) },
+                            alMarcarVuelta = { modeloVista.alMarcarVuelta(it) },
+                            alResetearCronometro = { modeloVista.alResetearCronometro(it) }
                         )
 
                         Pantalla.MENU -> PantallaMenu(
@@ -178,6 +256,7 @@ private fun BarraMenuSuperior(
         containerColor = Color(0xFF101010),
         contentColor = Color.White,
         modifier = Modifier.statusBarsPadding(),
+        divider = {},
         indicator = { posicionesPestanas ->
             TabRowDefaults.Indicator(
                 modifier = Modifier.tabIndicatorOffset(posicionesPestanas[indiceSeleccionado]),

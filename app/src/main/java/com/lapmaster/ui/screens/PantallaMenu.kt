@@ -55,27 +55,48 @@ fun PantallaMenu(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp, vertical = 24.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 32.dp)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(36.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Panel principal",
-            style = MaterialTheme.typography.displayLarge
+        androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+        BannerClima(
+            clima = clima,
+            gps = gps,
+            rumboDispositivoGrados = gps.rumboGrados ?: 0f
         )
-        BannerClima(clima = clima, gps = gps)
-        estado.acciones.forEach { accion -> BotonMenu(accion) }
-        ListaPilotos(
-            pilotos = estado.pilotos,
-            onAgregarPiloto = alAgregarPiloto,
-            puedeAgregarMas = estado.pilotos.size < 4
-        )
-        FilaConfiguraciones(
-            configuraciones = configuraciones,
-            alAlternarTema = alAlternarTema,
-            alAlternarMano = alAlternarMano
-        )
+        estado.acciones.forEach { accion ->
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+            ) {
+                BotonMenu(accion)
+            }
+        }
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+        ) {
+            ListaPilotos(
+                pilotos = estado.pilotos,
+                onAgregarPiloto = alAgregarPiloto,
+                puedeAgregarMas = estado.pilotos.size < 4
+            )
+        }
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+        ) {
+            FilaConfiguraciones(
+                configuraciones = configuraciones,
+                alAlternarTema = alAlternarTema,
+                alAlternarMano = alAlternarMano
+            )
+        }
     }
 }
 

@@ -24,6 +24,7 @@ import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -45,22 +46,14 @@ class ModeloVistaLapMaster : ViewModel() {
     )
 
     private val estadoInicial = EstadoAplicacionUi(
-        pantallaSeleccionada = Pantalla.VUELTAS,
+        pantallaSeleccionada = Pantalla.MENU,
         vueltas = EstadoVueltasUi(
             pilotos = listOf(
-                VueltaPilotoUi(pilotosIniciales[0], "1:32.27"),
-                VueltaPilotoUi(pilotosIniciales[1], "1:31.77")
+                VueltaPilotoUi(pilotosIniciales[0], tiempoMs = 0L, corriendo = false),
+                VueltaPilotoUi(pilotosIniciales[1], tiempoMs = 0L, corriendo = false)
             )
         ),
-        menu = EstadoMenuUi(
-            acciones = listOf(
-                AccionMenuUi("Tomar tiempo a 4 pilotos", 0xFF00DB54L),
-                AccionMenuUi("Tomar tiempo por sectores", 0xFF00DB54L),
-                AccionMenuUi("Historial", 0xFF00DB54L),
-                AccionMenuUi("Configuración", 0xFFECC43BL)
-            ),
-            pilotos = pilotosIniciales
-        ),
+
         sectores = EstadoSectoresUi(
             piloto = pilotosIniciales.first(),
             sectores = listOf(
@@ -114,6 +107,11 @@ class ModeloVistaLapMaster : ViewModel() {
 
     private val _estadoUi = MutableStateFlow(estadoInicial)
     val estadoUi: StateFlow<EstadoAplicacionUi> = _estadoUi
+    private val tickIntervalMs = 100L
+
+    init {
+        iniciarTickerCronometros()
+    }
 
     fun alSeleccionarPantalla(pantalla: Pantalla) {
         _estadoUi.update { it.copy(pantallaSeleccionada = pantalla) }
@@ -157,7 +155,7 @@ class ModeloVistaLapMaster : ViewModel() {
             )
             val pilotosActualizados = estado.menu.pilotos + nuevoPiloto
             val vueltasActualizadas = estado.vueltas.copy(
-                pilotos = (estado.vueltas.pilotos + VueltaPilotoUi(nuevoPiloto, "--:--.--")).take(4)
+                pilotos = (estado.vueltas.pilotos + VueltaPilotoUi(nuevoPiloto)).take(4)
             )
             val sectoresActualizados = if (estado.sectores.piloto == null) {
                 estado.sectores.copy(piloto = nuevoPiloto)
@@ -184,6 +182,7 @@ class ModeloVistaLapMaster : ViewModel() {
                     condicion = if (tieneFijacion) estado.clima.condicion else "Esperando señal GPS",
                     temperatura = if (tieneFijacion) estado.clima.temperatura else "--",
                     sensacionTermica = if (tieneFijacion) estado.clima.sensacionTermica else "--",
+                    direccionVientoGrados = if (tieneFijacion) estado.clima.direccionVientoGrados else null,
                     direccionViento = if (tieneFijacion) estado.clima.direccionViento else "--",
                     velocidadViento = if (tieneFijacion) estado.clima.velocidadViento else "--",
                     rafagaViento = if (tieneFijacion) estado.clima.rafagaViento else "--",
@@ -223,6 +222,7 @@ class ModeloVistaLapMaster : ViewModel() {
                                 sensacionTermica = datos.sensacionTermicaC?.let {
                                     String.format(Locale.US, "%.1f°C", it)
                                 } ?: "--",
+                                direccionVientoGrados = datos.vientoDireccion,
                                 direccionViento = viento,
                                 velocidadViento = vientoVelocidad,
                                 rafagaViento = rafaga,
@@ -243,6 +243,7 @@ class ModeloVistaLapMaster : ViewModel() {
                                 condicion = "Clima: ${resultado.mensaje}",
                                 temperatura = "--",
                                 sensacionTermica = "--",
+                                direccionVientoGrados = null,
                                 direccionViento = "--",
                                 velocidadViento = "--",
                                 rafagaViento = "--",
@@ -258,9 +259,85 @@ class ModeloVistaLapMaster : ViewModel() {
         }
     }
 
+    fun alAlternarCronometro(pilotoId: Int) {
+        _estadoUi.update { estado ->
+            estado.copy(
+                vueltas = estado.vueltas.copy(
+                    pilotos = estado.vueltas.pilotos.map { vuelta ->
+                        if (vuelta.piloto.id == pilotoId) {
+                            vuelta.copy(corriendo = !vuelta.corriendo)
+                        } else vuelta
+                    }
+                )
+            )
+        }
+    }
+
+    fun alMarcarVuelta(pilotoId: Int) {
+        _estadoUi.update { estado ->
+            estado.copy(
+                vueltas = estado.vueltas.copy(
+                    pilotos = estado.vueltas.pilotos.map { vuelta ->
+                        if (vuelta.piloto.id == pilotoId) {
+                            if (!vuelta.corriendo) {
+                                vuelta.copy(corriendo = true)
+                            } else {
+                                vuelta.copy(tiempoMs = 0L)
+                            }
+                        } else vuelta
+                    }
+                )
+            )
+        }
+    }
+
+    fun alResetearCronometro(pilotoId: Int) {
+        _estadoUi.update { estado ->
+            estado.copy(
+                vueltas = estado.vueltas.copy(
+                    pilotos = estado.vueltas.pilotos.map { vuelta ->
+                        if (vuelta.piloto.id == pilotoId) {
+                            vuelta.copy(tiempoMs = 0L, corriendo = false)
+                        } else vuelta
+                    }
+                )
+            )
+        }
+    }
+
+    private fun iniciarTickerCronometros() {
+        viewModelScope.launch(Dispatchers.Default) {
+            while (true) {
+                delay(tickIntervalMs)
+                _estadoUi.update { estado ->
+                    val hayCorriendo = estado.vueltas.pilotos.any { it.corriendo }
+                    if (!hayCorriendo) return@update estado
+
+                    val pilotosActualizados = estado.vueltas.pilotos.map { vuelta ->
+                        if (vuelta.corriendo) {
+                            vuelta.copy(tiempoMs = vuelta.tiempoMs + tickIntervalMs)
+                        } else vuelta
+                    }
+                    estado.copy(
+                        vueltas = estado.vueltas.copy(pilotos = pilotosActualizados)
+                    )
+                }
+            }
+        }
+    }
+
     private fun convertirAGradosCardinal(grados: Int): String {
         val direcciones = listOf("N", "NE", "E", "SE", "S", "SO", "O", "NO")
         val indice = ((grados % 360) / 45.0).toInt()
         return direcciones[indice.coerceIn(0, direcciones.lastIndex)]
+    }
+
+    fun alActualizarRumbo(grados: Float) {
+        val normalizado = ((grados % 360f) + 360f) % 360f
+        _estadoUi.update { estado ->
+            estado.copy(
+                gps = estado.gps.copy(rumboGrados = normalizado)
+            )
+        }
     }
 }

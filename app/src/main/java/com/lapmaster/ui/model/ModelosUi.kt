@@ -10,7 +10,8 @@ data class PilotoUi(
 
 data class VueltaPilotoUi(
     val piloto: PilotoUi,
-    val tiempo: String
+    val tiempoMs: Long = 0L,
+    val corriendo: Boolean = false
 )
 
 data class AccionMenuUi(val titulo: String, val color: Long)
@@ -31,6 +32,7 @@ data class ClimaUi(
     val temperatura: String = "",
     val sensacionTermica: String = "",
     val direccionViento: String = "",
+    val direccionVientoGrados: Int? = null,
     val velocidadViento: String = "",
     val rafagaViento: String = "",
     val presion: String = "",
@@ -44,7 +46,8 @@ data class GpsUi(
     val tieneFijacion: Boolean,
     val precisionMetros: Float,
     val latitud: Double? = null,
-    val longitud: Double? = null
+    val longitud: Double? = null,
+    val rumboGrados: Float? = null
 )
 
 data class ResumenUi(
