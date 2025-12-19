@@ -33,7 +33,7 @@ Esta debe ser rápida y gratis. https://openweathermap.org/current
 - Persistir pilotos/sesiones (Room) y servicio en primer plano.
 - Edición de piloto (nombre/número/color) y selección de piloto para sectores.
 - Animaciones
-- Implementar API de Ubicación Nativa
+- Implementar API de Ubicación Nativa (https://positionstack.com/)
 - API de traducción. Puede ser ML Kit Translation (on-device)
 - Poder poner un Idioma personalizado
 - Investigar necesidades y responsabilidades legales
