@@ -37,7 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import com.lapmaster.ui.ModeloVistaLapMaster
+import com.lapmaster.ui.viewmodels.ModeloVistaLapMaster
 import com.lapmaster.ui.model.Pantalla
 import com.lapmaster.ui.screens.PantallaGraficas
 import com.lapmaster.ui.screens.PantallaMenu

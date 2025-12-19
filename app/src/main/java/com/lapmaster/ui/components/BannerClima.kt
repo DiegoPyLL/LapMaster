@@ -57,6 +57,8 @@ import kotlin.math.sin
 import kotlin.math.PI
 import androidx.compose.foundation.layout.width
 
+// TODO (Implementar ubicación precisa, puede ser la api de OpenStreetMap)
+
 @Composable
 fun BannerClima(
     clima: ClimaUi,

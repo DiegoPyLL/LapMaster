@@ -11,7 +11,8 @@ data class PilotoUi(
 data class VueltaPilotoUi(
     val piloto: PilotoUi,
     val tiempoMs: Long = 0L,
-    val corriendo: Boolean = false
+    val corriendo: Boolean = false,
+    val inicioSistemaMs: Long? = null
 )
 
 data class AccionMenuUi(val titulo: String, val color: Long)
