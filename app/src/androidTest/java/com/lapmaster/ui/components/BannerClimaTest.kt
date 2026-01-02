@@ -75,14 +75,14 @@ class BannerClimaTest {
         composeTestRule.onNodeWithText("Mountain View").assertExists()
         composeTestRule.onNodeWithText("Niebla").assertExists()
         composeTestRule.onNodeWithText("8.6°C").assertExists()
-        composeTestRule.onNodeWithText("Sensación 6.8°C").assertExists()
+        composeTestRule.onNodeWithText("Sensacion 6.8°C").assertExists()
 
-        composeTestRule.onNodeWithText("Dirección del Viento").assertExists()
+        composeTestRule.onNodeWithText("Direccion del Viento").assertExists()
 
         composeTestRule.onNodeWithText("Velocidad del Viento").assertExists()
         composeTestRule.onNodeWithText("11.1 km/h", useUnmergedTree = true).assertExists()
 
-        composeTestRule.onNodeWithText("Presión Atmosférica").assertExists()
+        composeTestRule.onNodeWithText("Presion Atmosferica").assertExists()
         composeTestRule.onNodeWithText("1020 hPa", useUnmergedTree = true).assertExists()
 
         composeTestRule.onNodeWithText("Nubosidad").assertExists()

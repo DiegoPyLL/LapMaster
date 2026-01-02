@@ -5,7 +5,8 @@ data class PilotoUi(
     val id: Int,
     val nombre: String,
     val numero: String,
-    val color: Long
+    val color: Long,
+    val confirmado: Boolean = false
 )
 
 data class VueltaPilotoUi(
@@ -101,4 +102,4 @@ data class EstadoAplicacionUi(
     val configuraciones: EstadoConfiguracionUi = EstadoConfiguracionUi()
 )
 
-enum class Pantalla { VUELTAS, MENU, SECTORES, GRAFICAS }
+enum class Pantalla { VUELTAS, MENU, SECTORES, CLIMA, GRAFICAS }

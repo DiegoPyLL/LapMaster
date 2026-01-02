@@ -1,6 +1,7 @@
 package com.lapmaster.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,75 +25,70 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.lapmaster.ui.components.Cronometro
-import com.lapmaster.ui.components.TarjetaResumen
 import com.lapmaster.ui.model.EstadoConfiguracionUi
 import com.lapmaster.ui.model.EstadoVueltasUi
-import com.lapmaster.ui.model.GpsUi
 import com.lapmaster.ui.model.PreferenciaMano
-import com.lapmaster.ui.model.ResumenUi
 import com.lapmaster.ui.model.VueltaPilotoUi
-import com.lapmaster.ui.model.ClimaUi
-import com.lapmaster.ui.theme.GrisCarreras
 import com.lapmaster.ui.theme.RojoCarreras
 import com.lapmaster.ui.theme.VerdeCarreras
 
 @Composable
 fun PantallaVueltas(
     estado: EstadoVueltasUi,
-    clima: ClimaUi,
-    gps: GpsUi,
-    resumen: ResumenUi,
     configuraciones: EstadoConfiguracionUi,
-    alAgregarPiloto: () -> Unit,
+    mostrarVolverMenu: Boolean,
+    alVolverMenu: () -> Unit,
     alAlternarCronometro: (Int) -> Unit,
     alMarcarVuelta: (Int) -> Unit,
     alResetearCronometro: (Int) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 16.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-
-        Spacer(modifier = Modifier.height(6.dp))
-        estado.pilotos.chunked(2).forEach { fila ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                fila.forEach { vuelta ->
-                    TarjetaVueltaPiloto(
-                        vuelta = vuelta,
-                        zurdo = configuraciones.preferenciaMano == PreferenciaMano.ZURDO,
-                        modifier = Modifier.weight(1f),
-                        alAlternarCronometro = alAlternarCronometro,
-                        alMarcarVuelta = alMarcarVuelta,
-                        alResetearCronometro = alResetearCronometro
-                    )
-                    if (fila.size == 1) Spacer(modifier = Modifier.weight(1f))
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Spacer(modifier = Modifier.height(6.dp))
+            estado.pilotos.chunked(2).forEach { fila ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    fila.forEach { vuelta ->
+                        TarjetaVueltaPiloto(
+                            vuelta = vuelta,
+                            preferenciaMano = configuraciones.preferenciaMano,
+                            modifier = Modifier.weight(1f),
+                            alAlternarCronometro = alAlternarCronometro,
+                            alMarcarVuelta = alMarcarVuelta,
+                            alResetearCronometro = alResetearCronometro
+                        )
+                        if (fila.size == 1) Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        BotonAgregarPiloto(onAgregar = alAgregarPiloto, habilitado = estado.pilotos.size < 4)
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = { },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = RojoCarreras,
-                contentColor = Color.White
-            ),
-            shape = RoundedCornerShape(6.dp),
-            modifier = Modifier
-                .width(160.dp)
-                .height(48.dp)
-        ) {
-            Text(text = "Finalizar", fontWeight = FontWeight.Bold)
+
+        if (mostrarVolverMenu) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Button(
+                    onClick = alVolverMenu,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = VerdeCarreras,
+                        contentColor = Color.Black
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(56.dp)
+                ) {
+                    Text(text = "Volver al menu", fontWeight = FontWeight.Bold)
+                }
+            }
         }
     }
 }
@@ -100,7 +96,7 @@ fun PantallaVueltas(
 @Composable
 private fun TarjetaVueltaPiloto(
     vuelta: VueltaPilotoUi,
-    zurdo: Boolean,
+    preferenciaMano: PreferenciaMano,
     alAlternarCronometro: (Int) -> Unit,
     alMarcarVuelta: (Int) -> Unit,
     alResetearCronometro: (Int) -> Unit,
@@ -123,6 +119,7 @@ private fun TarjetaVueltaPiloto(
             val boton = @Composable {
                 val enMarcha = vuelta.corriendo
                 val etiquetaBoton = if (enMarcha) "Marcar vuelta" else "Iniciar"
+
                 Button(
                     onClick = {
                         if (enMarcha) alMarcarVuelta(vuelta.piloto.id) else alAlternarCronometro(vuelta.piloto.id)
@@ -152,7 +149,10 @@ private fun TarjetaVueltaPiloto(
                     colorTexto = MaterialTheme.colorScheme.onBackground
                 )
             }
-            if (zurdo) {
+
+            val impar = vuelta.piloto.id % 2 != 0
+            val botonPrimero = if (preferenciaMano == PreferenciaMano.ZURDO) !impar else impar
+            if (botonPrimero) {
                 boton()
                 cajaTiempo()
             } else {
@@ -172,25 +172,5 @@ private fun TarjetaVueltaPiloto(
                 Text(text = "Resetear")
             }
         }
-    }
-}
-
-@Composable
-private fun BotonAgregarPiloto(onAgregar: () -> Unit, habilitado: Boolean) {
-    Button(
-        onClick = onAgregar,
-        enabled = habilitado,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = VerdeCarreras,
-            contentColor = Color.Black,
-            disabledContainerColor = GrisCarreras,
-            disabledContentColor = Color.DarkGray
-        ),
-        shape = RoundedCornerShape(6.dp),
-        modifier = Modifier
-            .width(200.dp)
-            .height(48.dp)
-    ) {
-        Text(text = if (habilitado) "Agregar piloto" else "Límite de 4 pilotos", fontWeight = FontWeight.Bold)
     }
 }

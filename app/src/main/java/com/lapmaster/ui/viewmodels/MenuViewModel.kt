@@ -10,8 +10,10 @@ import com.lapmaster.ui.model.EntradaHistorialUi
 import com.lapmaster.ui.model.EstadoAplicacionUi
 import com.lapmaster.ui.model.EstadoConfiguracionUi
 import com.lapmaster.ui.model.EstadoGraficasUi
+import com.lapmaster.ui.model.EstadoMenuUi
 import com.lapmaster.ui.model.EstadoSectoresUi
 import com.lapmaster.ui.model.EstadoVueltasUi
+import com.lapmaster.ui.model.GpsUi
 import com.lapmaster.ui.model.Pantalla
 import com.lapmaster.ui.model.PilotoUi
 import com.lapmaster.ui.model.PreferenciaMano
@@ -19,6 +21,7 @@ import com.lapmaster.ui.model.ResumenUi
 import com.lapmaster.ui.model.SectorUi
 import com.lapmaster.ui.model.SerieGraficaUi
 import com.lapmaster.ui.model.VueltaPilotoUi
+import com.lapmaster.ui.model.paletaPilotos
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,39 +29,32 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
-import kotlin.collections.plus
 
 class ModeloVistaLapMaster : ViewModel() {
 
-    private val paletaPilotos = listOf(
-        0xFF00DB54L, // verde
-        0xFFFF5E5EL, // rojo
-        0xFF3BA3FFL, // azul
-        0xFFFFA726L  // naranja
-    )
-
-    private var siguienteIdPiloto = 3
-
-    private val pilotosIniciales = listOf(
-        PilotoUi(id = 1, nombre = "Piastri", numero = "81", color = paletaPilotos[1]),
-        PilotoUi(id = 2, nombre = "Norris", numero = "4", color = paletaPilotos[0])
-    )
+    private val pilotosIniciales = crearPilotosIniciales()
+    private var siguienteIdPiloto = (pilotosIniciales.maxOfOrNull { it.id } ?: 0) + 1
+    private fun consumirSiguienteId(): Int {
+        val id = siguienteIdPiloto
+        siguienteIdPiloto += 1
+        return id
+    }
 
     private val estadoInicial = EstadoAplicacionUi(
         pantallaSeleccionada = Pantalla.MENU,
         vueltas = EstadoVueltasUi(
-            pilotos = listOf(
-                VueltaPilotoUi(pilotosIniciales[0], tiempoMs = 0L, corriendo = false),
-                VueltaPilotoUi(pilotosIniciales[1], tiempoMs = 0L, corriendo = false)
-            )
+            pilotos = pilotosIniciales.map { VueltaPilotoUi(it, tiempoMs = 0L, corriendo = false) }
         ),
-
+        menu = EstadoMenuUi(
+            acciones = emptyList(),
+            pilotos = pilotosIniciales
+        ),
         sectores = EstadoSectoresUi(
-            piloto = pilotosIniciales.first(),
+            piloto = pilotosIniciales.firstOrNull(),
             sectores = listOf(
-                SectorUi("Sector 1", 20.81f, 0xFF00DB54L),
-                SectorUi("Sector 2", 30.18f, 0xFF00D7F8L),
-                SectorUi("Sector 3", 22.27f, 0xFF00DB54L)
+                SectorUi("Sector 1", 0f, 0xFF00DB54L),
+                SectorUi("Sector 2", 0f, 0xFF00D7F8L),
+                SectorUi("Sector 3", 0f, 0xFF00DB54L)
             )
         ),
         graficas = EstadoGraficasUi(
@@ -106,7 +102,7 @@ class ModeloVistaLapMaster : ViewModel() {
             lluvia = "--",
             humedad = 0
         ),
-
+        gps = GpsUi(false, 0f),
         resumen = ResumenUi(
             mejorVuelta = "1:30.12",
             promedioVuelta = "1:32.40",
@@ -123,94 +119,24 @@ class ModeloVistaLapMaster : ViewModel() {
     private val _estadoUi = MutableStateFlow(estadoInicial)
     val estadoUi: StateFlow<EstadoAplicacionUi> = _estadoUi
     private val tickIntervalMs = 10L
+    private val climaApi = ClimaApi()
+
+    val navegacion = NavegacionActions(_estadoUi::update)
+    val menu = MenuActions(_estadoUi::update, ::consumirSiguienteId, paletaPilotos)
+    val vueltas = VueltasActions(_estadoUi::update)
+    val sectores = SectoresActions(_estadoUi::update)
+    val graficas = GraficasActions(_estadoUi::update)
+    val gps = GpsActions(_estadoUi::update, ::cargarClima)
 
     init {
         iniciarTickerCronometros()
     }
 
-    fun alSeleccionarPantalla(pantalla: Pantalla) {
-        _estadoUi.update { it.copy(pantallaSeleccionada = pantalla) }
-    }
-
-    fun alSeleccionarAnio(anio: String) {
-        _estadoUi.update { estado ->
-            if (anio in estado.graficas.anios) {
-                estado.copy(graficas = estado.graficas.copy(anioSeleccionado = anio))
-            } else estado
-        }
-    }
-
-    fun alAlternarTema() {
-        _estadoUi.update { estado ->
-            estado.copy(
-                configuraciones = estado.configuraciones.copy(temaOscuro = !estado.configuraciones.temaOscuro)
-            )
-        }
-    }
-
-    fun alAlternarPreferenciaMano() {
-        _estadoUi.update { estado ->
-            val siguiente = if (estado.configuraciones.preferenciaMano == PreferenciaMano.DIESTRO) {
-                PreferenciaMano.ZURDO
-            } else PreferenciaMano.DIESTRO
-            estado.copy(configuraciones = estado.configuraciones.copy(preferenciaMano = siguiente))
-        }
-    }
-
-    fun alAgregarPiloto() {
-        _estadoUi.update { estado ->
-            if (estado.menu.pilotos.size >= 4) return@update estado
-
-            val color = paletaPilotos[estado.menu.pilotos.size % paletaPilotos.size]
-            val nuevoPiloto = PilotoUi(
-                id = siguienteIdPiloto++,
-                nombre = "Piloto #${siguienteIdPiloto - 1}",
-                numero = "${80 + siguienteIdPiloto}",
-                color = color
-            )
-            val pilotosActualizados = estado.menu.pilotos + nuevoPiloto
-            val vueltasActualizadas = estado.vueltas.copy(
-                pilotos = (estado.vueltas.pilotos + VueltaPilotoUi(nuevoPiloto)).take(4)
-            )
-            val sectoresActualizados = if (estado.sectores.piloto == null) {
-                estado.sectores.copy(piloto = nuevoPiloto)
-            } else estado.sectores
-            val menuActualizado = estado.menu.copy(pilotos = pilotosActualizados)
-
-            estado.copy(menu = menuActualizado, vueltas = vueltasActualizadas, sectores = sectoresActualizados)
-        }
-    }
-
-    private val climaApi = ClimaApi()
-
-    fun alActualizarEstadoGps(tieneFijacion: Boolean, precisionMetros: Float, latitud: Double?, longitud: Double?) {
-        _estadoUi.update { estado ->
-            estado.copy(
-                gps = estado.gps.copy(
-                    tieneFijacion = tieneFijacion,
-                    precisionMetros = precisionMetros,
-                    latitud = latitud,
-                    longitud = longitud
-                ),
-                clima = estado.clima.copy(
-                    ubicacion = if (tieneFijacion) estado.clima.ubicacion else "Ubicación no disponible",
-                    condicion = if (tieneFijacion) estado.clima.condicion else "Esperando señal GPS",
-                    temperatura = if (tieneFijacion) estado.clima.temperatura else "--",
-                    sensacionTermica = if (tieneFijacion) estado.clima.sensacionTermica else "--",
-                    direccionVientoGrados = if (tieneFijacion) estado.clima.direccionVientoGrados else null,
-                    direccionViento = if (tieneFijacion) estado.clima.direccionViento else "--",
-                    velocidadViento = if (tieneFijacion) estado.clima.velocidadViento else "--",
-                    rafagaViento = if (tieneFijacion) estado.clima.rafagaViento else "--",
-                    presion = if (tieneFijacion) estado.clima.presion else "--",
-                    visibilidad = if (tieneFijacion) estado.clima.visibilidad else "--",
-                    nubosidad = if (tieneFijacion) estado.clima.nubosidad else "--",
-                    lluvia = if (tieneFijacion) estado.clima.lluvia else "--"
-                )
-            )
-        }
-        if (tieneFijacion && latitud != null && longitud != null) {
-            cargarClima(latitud, longitud)
-        }
+    private fun crearPilotosIniciales(): List<PilotoUi> {
+        return listOf(
+            PilotoUi(id = 1, nombre = "Piastri", numero = "81", color = paletaPilotos[1], confirmado = true),
+            PilotoUi(id = 2, nombre = "Norris", numero = "4", color = paletaPilotos[0], confirmado = true)
+        )
     }
 
     private fun cargarClima(latitud: Double, longitud: Double) {
@@ -219,13 +145,20 @@ class ModeloVistaLapMaster : ViewModel() {
                 is ResultadoClima.Ok -> {
                     val datos = resultado.datos
                     val viento = datos.vientoDireccion?.let { convertirAGradosCardinal(it) } ?: "--"
-                    val vientoVelocidad = datos.vientoVelocidadMs?.let { String.Companion.format(
-                        Locale.US, "%.1f km/h", it * 3.6f) } ?: "--"
-                    val rafaga = datos.vientoRafagaMs?.let { String.Companion.format(Locale.US, "%.1f km/h", it * 3.6f) } ?: "--"
+                    val vientoVelocidad = datos.vientoVelocidadMs?.let {
+                        String.Companion.format(Locale.US, "%.1f km/h", it * 3.6f)
+                    } ?: "--"
+                    val rafaga = datos.vientoRafagaMs?.let {
+                        String.Companion.format(Locale.US, "%.1f km/h", it * 3.6f)
+                    } ?: "--"
                     val presion = datos.presion?.let { "$it hPa" } ?: "--"
-                    val visibilidad = datos.visibilidad?.let { String.Companion.format(Locale.US, "%.1f km", it / 1000f) } ?: "--"
+                    val visibilidad = datos.visibilidad?.let {
+                        String.Companion.format(Locale.US, "%.1f km", it / 1000f)
+                    } ?: "--"
                     val nubosidad = datos.nubosidad?.let { "$it%" } ?: "--"
-                    val lluvia = datos.lluviaMmHora?.let { String.Companion.format(Locale.US, "%.1f mm/h", it) } ?: "--"
+                    val lluvia = datos.lluviaMmHora?.let {
+                        String.Companion.format(Locale.US, "%.1f mm/h", it)
+                    } ?: "--"
 
                     _estadoUi.update { estado ->
                         estado.copy(
@@ -275,65 +208,6 @@ class ModeloVistaLapMaster : ViewModel() {
         }
     }
 
-    fun alAlternarCronometro(pilotoId: Int) {
-        val ahora = SystemClock.elapsedRealtime()
-        _estadoUi.update { estado ->
-            estado.copy(
-                vueltas = estado.vueltas.copy(
-                    pilotos = estado.vueltas.pilotos.map { vuelta ->
-                        if (vuelta.piloto.id != pilotoId) return@map vuelta
-                        if (vuelta.corriendo) {
-                            val inicio = vuelta.inicioSistemaMs ?: ahora
-                            val acumulado = vuelta.tiempoMs + (ahora - inicio)
-                            vuelta.copy(
-                                corriendo = false,
-                                tiempoMs = acumulado,
-                                inicioSistemaMs = null
-                            )
-                        } else {
-                            vuelta.copy(
-                                corriendo = true,
-                                inicioSistemaMs = ahora
-                            )
-                        }
-                    }
-                )
-            )
-        }
-    }
-
-    fun alMarcarVuelta(pilotoId: Int) {
-        val ahora = SystemClock.elapsedRealtime()
-        _estadoUi.update { estado ->
-            estado.copy(
-                vueltas = estado.vueltas.copy(
-                    pilotos = estado.vueltas.pilotos.map { vuelta ->
-                        if (vuelta.piloto.id != pilotoId) return@map vuelta
-                        if (!vuelta.corriendo) {
-                            vuelta.copy(corriendo = true, inicioSistemaMs = ahora)
-                        } else {
-                            vuelta.copy(tiempoMs = 0L, corriendo = true, inicioSistemaMs = ahora)
-                        }
-                    }
-                )
-            )
-        }
-    }
-
-    fun alResetearCronometro(pilotoId: Int) {
-        _estadoUi.update { estado ->
-            estado.copy(
-                vueltas = estado.vueltas.copy(
-                    pilotos = estado.vueltas.pilotos.map { vuelta ->
-                        if (vuelta.piloto.id == pilotoId) {
-                            vuelta.copy(tiempoMs = 0L, corriendo = false, inicioSistemaMs = null)
-                        } else vuelta
-                    }
-                )
-            )
-        }
-    }
-
     private fun iniciarTickerCronometros() {
         viewModelScope.launch(Dispatchers.Default) {
             while (true) {
@@ -364,14 +238,5 @@ class ModeloVistaLapMaster : ViewModel() {
         val direcciones = listOf("N", "NE", "E", "SE", "S", "SO", "O", "NO")
         val indice = ((grados % 360) / 45.0).toInt()
         return direcciones[indice.coerceIn(0, direcciones.lastIndex)]
-    }
-
-    fun alActualizarRumbo(grados: Float) {
-        val normalizado = ((grados % 360f) + 360f) % 360f
-        _estadoUi.update { estado ->
-            estado.copy(
-                gps = estado.gps.copy(rumboGrados = normalizado)
-            )
-        }
     }
 }

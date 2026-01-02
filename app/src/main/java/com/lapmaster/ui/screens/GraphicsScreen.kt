@@ -51,7 +51,7 @@ fun PantallaGraficas(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Gráficos",
+            text = " Placeholder Gráficos",
             style = MaterialTheme.typography.displayLarge
         )
         androidx.compose.material3.TabRow(
