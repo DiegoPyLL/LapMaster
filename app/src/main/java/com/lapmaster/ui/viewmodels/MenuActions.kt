@@ -28,20 +28,22 @@ class MenuActions(
     }
 
     fun alAgregarPiloto() {
-        updateEstado update@{ estado ->
-            if (estado.menu.pilotos.size >= 4) return@update estado
-
-            val id = siguienteId()
-            val color = paletaPilotos[estado.menu.pilotos.size % paletaPilotos.size]
-            val nuevoPiloto = PilotoUi(
-                id = id,
-                nombre = "Piloto N°$id",
-                numero = "${80 + id}",
-                color = color,
-                confirmado = false
-            )
-            val pilotosActualizados = (estado.menu.pilotos + nuevoPiloto).take(4)
-            actualizarPilotosEnEstado(estado, pilotosActualizados)
+        updateEstado { estado ->
+            if (estado.menu.pilotos.size >= 4) {
+                estado
+            } else {
+                val id = siguienteId()
+                val color = paletaPilotos[estado.menu.pilotos.size % paletaPilotos.size]
+                val nuevoPiloto = PilotoUi(
+                    id = id,
+                    nombre = "Piloto N°$id",
+                    numero = "${80 + id}",
+                    color = color,
+                    confirmado = false
+                )
+                val pilotosActualizados = (estado.menu.pilotos + nuevoPiloto).take(4)
+                actualizarPilotosEnEstado(estado, pilotosActualizados)
+            }
         }
     }
 
