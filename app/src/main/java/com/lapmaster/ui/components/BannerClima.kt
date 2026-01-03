@@ -55,7 +55,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.PI
 
-// TODO (Implementar ubicación precisa, puede ser la api de OpenStreetMap)
+// Implementar ubicación precisa, puede ser la api de OpenStreetMap
 
 @Composable
 fun BannerClima(

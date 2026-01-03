@@ -8,16 +8,22 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.view.Surface
 import android.content.res.Configuration
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Cloud
@@ -52,6 +58,7 @@ import com.lapmaster.ui.screens.PantallaSectores
 import com.lapmaster.ui.screens.PantallaVueltas
 import com.lapmaster.ui.theme.TemaLapMaster
 import com.lapmaster.ui.theme.VerdeCarrerasOscuro
+import com.lapmaster.ui.viewmodels.SectoresActions
 
 private data class ElementoNavegacion(
     val pantalla: Pantalla,
@@ -94,12 +101,16 @@ class ActividadPrincipal : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
         window.statusBarColor = android.graphics.Color.BLACK
-        inicializarProveedorGps()
-        inicializarSensorBrjula()
-        solicitarPermisoGpsSiEsNecesario()
         setContent {
             AplicacionLapMaster(modeloVista = modeloVista)
         }
+        inicializarProveedorGps()
+        inicializarSensorBrjula()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        solicitarPermisoGpsSiEsNecesario()
     }
 
     override fun onResume() {
@@ -151,6 +162,7 @@ class ActividadPrincipal : ComponentActivity() {
     }
 
     private val listenerBrjula = object : SensorEventListener {
+        @RequiresApi(Build.VERSION_CODES.R)
         override fun onSensorChanged(event: SensorEvent) {
             if (event.sensor.type != Sensor.TYPE_ROTATION_VECTOR) return
             SensorManager.getRotationMatrixFromVector(matrizRotacion, event.values)
@@ -164,7 +176,9 @@ class ActividadPrincipal : ComponentActivity() {
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun ajustarMatrizPorRotacionPantalla() {
+        // todo reemplazar por una versión no depreciada
         val rotation = windowManager.defaultDisplay?.rotation ?: display?.rotation ?: Surface.ROTATION_0
         when (rotation) {
             Surface.ROTATION_90 -> SensorManager.remapCoordinateSystem(
@@ -198,10 +212,16 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
     val esHorizontal = configuracion.orientation == Configuration.ORIENTATION_LANDSCAPE
     val hayCronometroCorriendo = estadoUi.vueltas.pilotos.any { it.corriendo }
     val ocultarBarra = esHorizontal && pantallaSeleccionada == Pantalla.VUELTAS && hayCronometroCorriendo
+    val insetsContenido = if (ocultarBarra) {
+        WindowInsets.systemBars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+    } else {
+        WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)
+    }
 
     TemaLapMaster(usarTemaOscuro = estadoUi.configuraciones.temaOscuro) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             Scaffold(
+                contentWindowInsets = insetsContenido,
                 topBar = {
                     if (!ocultarBarra) {
                         BarraMenuSuperior(
@@ -244,7 +264,10 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
 
                         Pantalla.SECTORES -> PantallaSectores(
                             estado = estadoUi.sectores,
-                            configuraciones = estadoUi.configuraciones
+                            configuraciones = estadoUi.configuraciones,
+                            alIniciarCronometro = { modeloVista.sectores.alIniciarCronometro() },
+                            alMarcarSector = { modeloVista.sectores.alMarcarSector(it) },
+                            alReiniciarSectores = { modeloVista.sectores.alReiniciarSectores() }
                         )
 
                         Pantalla.CLIMA -> PantallaClima(
@@ -252,6 +275,8 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
                             gps = estadoUi.gps
                         )
 
+                        // todo cambiar el nombre de la funcion para quitar anio,
+                        //  ya no se usa
                         Pantalla.GRAFICAS -> PantallaGraficas(
                             estado = estadoUi.graficas,
                             alSeleccionarAnio = { modeloVista.graficas.alSeleccionarAnio(it) }
@@ -263,15 +288,21 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
     }
 }
 
+private fun SectoresActions.alReiniciarSectores() {
+    TODO("Not yet implemented")
+}
+
 @Composable
 private fun BarraMenuSuperior(
     pantallaSeleccionada: Pantalla,
     alSeleccionar: (Pantalla) -> Unit
 ) {
+
     val esHorizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val altoTab = if (esHorizontal) 44.dp else 56.dp
-    val tamanoTexto = if (esHorizontal) 10.sp else 11.sp
-    val tamanoIcono = if (esHorizontal) 18.dp else 22.dp
+    val altoTab = if (esHorizontal) 46.dp else 54.dp
+    val tamanoTexto = if (esHorizontal) 11.sp else 9.sp
+    val tamanoIcono = if (esHorizontal) 19.dp else 18.dp
+
     val elementos = listOf(
         ElementoNavegacion(Pantalla.MENU, "Menú", Icons.Outlined.Menu),
         ElementoNavegacion(Pantalla.CLIMA, "Clima", Icons.Outlined.Cloud),
@@ -281,11 +312,16 @@ private fun BarraMenuSuperior(
     )
     val indiceSeleccionado = elementos.indexOfFirst { it.pantalla == pantallaSeleccionada }.coerceAtLeast(0)
 
+
+
+    // todo modificar el ancho de los íconos para que permita usar todo el cuadro, tiene mucho padding
     TabRow(
         selectedTabIndex = indiceSeleccionado,
         containerColor = Color(0xFF101010),
         contentColor = Color.White,
-        modifier = Modifier.statusBarsPadding().height(altoTab),
+        modifier = Modifier
+            .statusBarsPadding()
+            .height(altoTab),
         divider = {},
         indicator = { posicionesPestanas ->
             TabRowDefaults.Indicator(

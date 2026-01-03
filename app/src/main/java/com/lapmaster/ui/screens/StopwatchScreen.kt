@@ -3,6 +3,7 @@ package com.lapmaster.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -22,9 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import android.content.res.Configuration
 import com.lapmaster.ui.components.Cronometro
 import com.lapmaster.ui.model.EstadoConfiguracionUi
 import com.lapmaster.ui.model.EstadoVueltasUi
@@ -32,6 +34,16 @@ import com.lapmaster.ui.model.PreferenciaMano
 import com.lapmaster.ui.model.VueltaPilotoUi
 import com.lapmaster.ui.theme.RojoCarreras
 import com.lapmaster.ui.theme.VerdeCarreras
+
+
+
+
+
+
+
+
+
+// todo hacer que en vertical aparezcan todos en vertical, una sola columna para todo
 
 @Composable
 fun PantallaVueltas(
@@ -43,6 +55,8 @@ fun PantallaVueltas(
     alMarcarVuelta: (Int) -> Unit,
     alResetearCronometro: (Int) -> Unit
 ) {
+    val esHorizontal = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -53,22 +67,35 @@ fun PantallaVueltas(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Spacer(modifier = Modifier.height(6.dp))
-            estado.pilotos.chunked(2).forEach { fila ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    fila.forEach { vuelta ->
-                        TarjetaVueltaPiloto(
-                            vuelta = vuelta,
-                            preferenciaMano = configuraciones.preferenciaMano,
-                            modifier = Modifier.weight(1f),
-                            alAlternarCronometro = alAlternarCronometro,
-                            alMarcarVuelta = alMarcarVuelta,
-                            alResetearCronometro = alResetearCronometro
-                        )
-                        if (fila.size == 1) Spacer(modifier = Modifier.weight(1f))
+            if (esHorizontal) {
+                estado.pilotos.chunked(2).forEach { fila ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        fila.forEach { vuelta ->
+                            TarjetaVueltaPiloto(
+                                vuelta = vuelta,
+                                preferenciaMano = configuraciones.preferenciaMano,
+                                modifier = Modifier.weight(1f),
+                                alAlternarCronometro = alAlternarCronometro,
+                                alMarcarVuelta = alMarcarVuelta,
+                                alResetearCronometro = alResetearCronometro
+                            )
+                            if (fila.size == 1) Spacer(modifier = Modifier.weight(1f))
+                        }
                     }
+                }
+            } else {
+                estado.pilotos.forEach { vuelta ->
+                    TarjetaVueltaPiloto(
+                        vuelta = vuelta,
+                        preferenciaMano = configuraciones.preferenciaMano,
+                        modifier = Modifier.fillMaxWidth(),
+                        alAlternarCronometro = alAlternarCronometro,
+                        alMarcarVuelta = alMarcarVuelta,
+                        alResetearCronometro = alResetearCronometro
+                    )
                 }
             }
         }
@@ -108,7 +135,7 @@ private fun TarjetaVueltaPiloto(
     ) {
         Text(
             text = "${vuelta.piloto.nombre} #${vuelta.piloto.numero}",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))

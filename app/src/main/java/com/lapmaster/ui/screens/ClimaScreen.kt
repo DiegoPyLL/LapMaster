@@ -17,6 +17,10 @@ import com.lapmaster.ui.components.BannerClima
 import com.lapmaster.ui.model.ClimaUi
 import com.lapmaster.ui.model.GpsUi
 
+
+
+// todo ver posibilidad de usar un mapa meteorologico de las nubes, como UAV Forecast.
+//  Reordenar componentes para que use la pantalla completa de forma optima
 @Composable
 fun PantallaClima(
     clima: ClimaUi,

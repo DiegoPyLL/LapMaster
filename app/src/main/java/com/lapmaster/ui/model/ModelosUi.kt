@@ -2,9 +2,9 @@ package com.lapmaster.ui.model
 
 // Guardamos colores como ARGB Long para no acoplar el ViewModel a Compose.
 data class PilotoUi(
-    val id: Int,
+    var id: Int,
     val nombre: String,
-    val numero: String,
+    var numero: String,
     val color: Long,
     val confirmado: Boolean = false
 )
@@ -18,7 +18,7 @@ data class VueltaPilotoUi(
 
 data class AccionMenuUi(val titulo: String, val color: Long)
 
-data class SectorUi(val etiqueta: String, val tiempo: Float, val color: Long)
+data class SectorUi(val etiqueta: String, val tiempoMs: Long, val color: Long)
 
 data class SerieGraficaUi(val nombre: String, val color: Long, val valores: List<Float>)
 
@@ -80,12 +80,14 @@ data class EstadoMenuUi(
 
 data class EstadoSectoresUi(
     val piloto: PilotoUi? = null,
-    val sectores: List<SectorUi> = emptyList()
+    val sectores: List<SectorUi> = emptyList(),
+    val inicioSistemaMs: Long? = null,
+    val tiempoActualMs: Long = 0L
 )
 
 data class EstadoGraficasUi(
-    val anios: List<String> = emptyList(),
-    val anioSeleccionado: String = "",
+    val tanda: List<String> = emptyList(),
+    val tandaSeleccionada: String = "",
     val series: List<SerieGraficaUi> = emptyList(),
     val historial: List<EntradaHistorialUi> = emptyList()
 )

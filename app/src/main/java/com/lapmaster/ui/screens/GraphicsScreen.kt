@@ -40,8 +40,8 @@ fun PantallaGraficas(
     alSeleccionarAnio: (String) -> Unit
 ) {
     val series = estado.series
-    val anios = estado.anios
-    val anioSeleccionado = estado.anioSeleccionado
+    val anios = estado.tanda
+    val anioSeleccionado = estado.tandaSeleccionada
 
     Column(
         modifier = Modifier

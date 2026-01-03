@@ -52,34 +52,46 @@ class ModeloVistaLapMaster : ViewModel() {
         sectores = EstadoSectoresUi(
             piloto = pilotosIniciales.firstOrNull(),
             sectores = listOf(
-                SectorUi("Sector 1", 0f, 0xFF00DB54L),
-                SectorUi("Sector 2", 0f, 0xFF00D7F8L),
-                SectorUi("Sector 3", 0f, 0xFF00DB54L)
+                SectorUi("Sector 1", 0L, 0xFF00DB54L),
+                SectorUi("Sector 2", 0L, 0xFF00D7F8L),
+                SectorUi("Sector 3", 0L, 0xFF00DB54L)
             )
         ),
+
         graficas = EstadoGraficasUi(
-            anios = listOf("2025", "2024", "2023", "2022", "2021", "2020"),
-            anioSeleccionado = "2025",
+            tanda = listOf("1ra Tanda", "2da Tanda", "3ra Tanda"),
+            tandaSeleccionada = "1ra Tanda",
             series = listOf(
                 SerieGraficaUi(
-                    "Piastri",
+                    "Piloto 1",
                     0xFFFF5E5EL,
-                    listOf(4f, 6f, 8f, 10f, 12f, 14f, 16f, 18f, 16f, 14f)
+                    listOf(
+                        7.9f,
+                        6.8f, 6.1f, 5.3f, 5.9f, 5.2f, 4.9f, 5.6f
+                    )
                 ),
                 SerieGraficaUi(
-                    "Norris",
+                    "Piloto 2",
                     0xFF53E38EL,
-                    listOf(0f, 2f, 4f, 8f, 10f, 12f, 14f, 18f, 20f, 22f)
+                    listOf(
+                        9.4f,
+                        7.1f, 6.7f, 5.2f, 5.8f, 5.6f, 5.3f, 5.0f
+                    )
                 ),
                 SerieGraficaUi(
-                    "Verstappen",
+                    "Piloto 3",
                     0xFFFFA726L,
-                    listOf(-2f, -1f, 2f, 3f, 6f, 7f, 10f, 11f, 14f, 16f)
+                    listOf(
+                        9.8f, 8.9f,
+                        7.0f, 6.5f, 5.6f, 4.6f, 4.1f, 4.5f, 4.2f
+                    )
                 ),
                 SerieGraficaUi(
-                    "Russell",
+                    "Piloto 4",
                     0xFF3BA3FFL,
-                    listOf(-6f, -4f, -2f, 0f, 1f, 2f, 1f, 0f, -1f, -2f)
+                    listOf(
+                        7.0f, 6.5f, 5.6f, 4.6f, 4.1f, 4.5f, 4.2f
+                    )
                 )
             ),
             historial = listOf(
@@ -134,11 +146,11 @@ class ModeloVistaLapMaster : ViewModel() {
 
     private fun crearPilotosIniciales(): List<PilotoUi> {
         return listOf(
-            PilotoUi(id = 1, nombre = "Piastri", numero = "81", color = paletaPilotos[1], confirmado = true),
-            PilotoUi(id = 2, nombre = "Norris", numero = "4", color = paletaPilotos[0], confirmado = true)
+            PilotoUi(id = 1, nombre = "Piloto N°1", numero = "101", color = paletaPilotos[0], confirmado = false)
         )
     }
 
+    // todo revisar el locale.us para ajustarlo al pais?
     private fun cargarClima(latitud: Double, longitud: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             when (val resultado = climaApi.obtenerClima(latitud, longitud, lang = "es")) {
@@ -215,19 +227,37 @@ class ModeloVistaLapMaster : ViewModel() {
                 val ahora = SystemClock.elapsedRealtime()
                 _estadoUi.update { estado ->
                     val hayCorriendo = estado.vueltas.pilotos.any { it.corriendo }
-                    if (!hayCorriendo) return@update estado
+                    val sectoresActivos = estado.sectores.inicioSistemaMs != null &&
+                        estado.sectores.sectores.any { it.tiempoMs == 0L }
+                    if (!hayCorriendo && !sectoresActivos) return@update estado
 
-                    val pilotosActualizados = estado.vueltas.pilotos.map { vuelta ->
-                        if (!vuelta.corriendo) return@map vuelta
-                        val inicio = vuelta.inicioSistemaMs ?: ahora
-                        val nuevoTiempo = vuelta.tiempoMs + (ahora - inicio)
-                        vuelta.copy(
-                            tiempoMs = nuevoTiempo,
-                            inicioSistemaMs = ahora
-                        )
+                    val pilotosActualizados = if (hayCorriendo) {
+                        estado.vueltas.pilotos.map { vuelta ->
+                            if (!vuelta.corriendo) return@map vuelta
+                            val inicio = vuelta.inicioSistemaMs ?: ahora
+                            val nuevoTiempo = vuelta.tiempoMs + (ahora - inicio)
+                            vuelta.copy(
+                                tiempoMs = nuevoTiempo,
+                                inicioSistemaMs = ahora
+                            )
+                        }
+                    } else {
+                        estado.vueltas.pilotos
                     }
+
+                    val sectoresActualizados = if (sectoresActivos) {
+                        val inicio = estado.sectores.inicioSistemaMs ?: ahora
+                        estado.sectores.copy(
+                            inicioSistemaMs = inicio,
+                            tiempoActualMs = ahora - inicio
+                        )
+                    } else {
+                        estado.sectores
+                    }
+
                     estado.copy(
-                        vueltas = estado.vueltas.copy(pilotos = pilotosActualizados)
+                        vueltas = estado.vueltas.copy(pilotos = pilotosActualizados),
+                        sectores = sectoresActualizados
                     )
                 }
             }

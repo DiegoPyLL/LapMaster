@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lapmaster.ui.theme.GrisCarreras
@@ -24,12 +26,18 @@ fun Cronometro(
     tiempoMs: Long,
     modifier: Modifier = Modifier,
     fondo: Color = GrisCarreras,
-    colorTexto: Color = MaterialTheme.colorScheme.onBackground
+    colorTexto: Color = MaterialTheme.colorScheme.onBackground,
+    alto: Dp = 72.dp,
+    ancho: Dp? = 130.dp,
+    tamanoTexto: TextUnit = 30.sp
 ) {
+    val tamanoTarjeta = if (ancho == null) {
+        modifier.height(alto)
+    } else {
+        modifier.height(alto).width(ancho)
+    }
     Card(
-        modifier = modifier
-            .height(72.dp)
-            .width(130.dp),
+        modifier = tamanoTarjeta,
         colors = CardDefaults.cardColors(containerColor = fondo),
         shape = RoundedCornerShape(4.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -41,7 +49,7 @@ fun Cronometro(
         ) {
             Text(
                 text = formatearTiempo(tiempoMs),
-                fontSize = 30.sp,
+                fontSize = tamanoTexto,
                 fontFamily = FontFamily.Monospace,
                 color = colorTexto
             )

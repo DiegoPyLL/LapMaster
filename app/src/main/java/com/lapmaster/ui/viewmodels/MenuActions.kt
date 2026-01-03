@@ -27,25 +27,31 @@ class MenuActions(
         }
     }
 
+
     fun alAgregarPiloto() {
         updateEstado { estado ->
-            if (estado.menu.pilotos.size >= 4) {
-                estado
-            } else {
-                val id = siguienteId()
-                val color = paletaPilotos[estado.menu.pilotos.size % paletaPilotos.size]
-                val nuevoPiloto = PilotoUi(
-                    id = id,
-                    nombre = "Piloto N°$id",
-                    numero = "${80 + id}",
-                    color = color,
-                    confirmado = false
-                )
-                val pilotosActualizados = (estado.menu.pilotos + nuevoPiloto).take(4)
-                actualizarPilotosEnEstado(estado, pilotosActualizados)
-            }
+
+            // Si quisiera hacer que haya más de 4 pilots activos hay que modificar este parametro
+            if (estado.menu.pilotos.size >= 4) return@updateEstado estado
+
+            val usados = estado.menu.pilotos.map { it.id }.toSet()
+            val id = generateSequence(1) { it + 1 }.first { it !in usados } // primer id libre
+
+            val color = paletaPilotos[estado.menu.pilotos.size % paletaPilotos.size]
+
+            val nuevoPiloto = PilotoUi(
+                id = id,
+                nombre = "Piloto N°$id",
+                numero = "${100 + id}",
+                color = color,
+                confirmado = false
+            )
+
+            val pilotosActualizados = (estado.menu.pilotos + nuevoPiloto).take(4)
+            actualizarPilotosEnEstado(estado, pilotosActualizados)
         }
     }
+
 
     fun alActualizarPilotoNombre(pilotoId: Int, nombre: String) {
         actualizarPiloto(pilotoId) { piloto ->

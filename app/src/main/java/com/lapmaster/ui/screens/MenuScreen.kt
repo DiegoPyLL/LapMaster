@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Brightness4
@@ -43,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -57,6 +56,13 @@ import com.lapmaster.ui.theme.AmarilloCarreras
 import com.lapmaster.ui.theme.GrisCarreras
 import com.lapmaster.ui.theme.RojoCarreras
 import com.lapmaster.ui.theme.VerdeCarreras
+
+
+
+// todo tengo que implementar un cuadro que solo aparezca a los alpha tester para mostrar la idea
+
+
+
 
 @Composable
 fun PantallaMenu(
@@ -74,12 +80,11 @@ fun PantallaMenu(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 32.dp)
+            .padding(start = 20.dp, end = 20.dp)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(36.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(36.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
         estado.acciones.forEach { accion ->
             Box(
                 modifier = Modifier
@@ -90,9 +95,7 @@ fun PantallaMenu(
             }
         }
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             ListaPilotos(
                 pilotos = estado.pilotos,
@@ -106,9 +109,7 @@ fun PantallaMenu(
             )
         }
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             FilaConfiguraciones(
                 configuraciones = configuraciones,
@@ -380,7 +381,7 @@ private fun FilaConfiguraciones(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(text = "Configuraciones rapidas", style = MaterialTheme.typography.titleMedium)
+            Text(text = "Configuraciones rápidas", style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -411,7 +412,7 @@ private fun FilaConfiguraciones(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Botones para ${if (configuraciones.preferenciaMano == PreferenciaMano.ZURDO) "zurdos" else "diestros"}"
+                    text = "Por Implementar\nBotones para ${if (configuraciones.preferenciaMano == PreferenciaMano.ZURDO) "zurdos" else "diestros"}"
                 )
                 Switch(
                     checked = configuraciones.preferenciaMano == PreferenciaMano.ZURDO,
@@ -422,10 +423,6 @@ private fun FilaConfiguraciones(
                     )
                 )
             }
-            Text(
-                text = "Orientacion: ${configuraciones.preferenciaOrientacion.name.lowercase().replaceFirstChar { it.uppercase() }} (vertical u horizontal)",
-                style = MaterialTheme.typography.labelLarge
-            )
         }
     }
 }
