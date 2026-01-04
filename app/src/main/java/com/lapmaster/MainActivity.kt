@@ -58,7 +58,6 @@ import com.lapmaster.ui.screens.PantallaSectores
 import com.lapmaster.ui.screens.PantallaVueltas
 import com.lapmaster.ui.theme.TemaLapMaster
 import com.lapmaster.ui.theme.VerdeCarrerasOscuro
-import com.lapmaster.ui.viewmodels.SectoresActions
 
 private data class ElementoNavegacion(
     val pantalla: Pantalla,
@@ -286,10 +285,6 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
             }
         }
     }
-}
-
-private fun SectoresActions.alReiniciarSectores() {
-    TODO("Not yet implemented")
 }
 
 @Composable

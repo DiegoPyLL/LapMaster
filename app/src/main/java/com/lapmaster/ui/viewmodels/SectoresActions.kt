@@ -44,14 +44,28 @@ class SectoresActions(
                 }
 
                 val hayPendientes = sectoresMarcados.any { it.tiempoMs == 0L }
-                estado.copy(
-                    sectores = estado.sectores.copy(
-                        sectores = sectoresMarcados,
-                        inicioSistemaMs = inicio,
-                        tiempoActualMs = if (hayPendientes) ahora - inicio else estado.sectores.tiempoActualMs
+                val totalMs = sectoresMarcados.sumOf { it.tiempoMs }
+                if (hayPendientes) {
+                    estado.copy(
+                        sectores = estado.sectores.copy(
+                            sectores = sectoresMarcados,
+                            inicioSistemaMs = inicio,
+                            tiempoActualMs = ahora - inicio,
+                            ultimoTiempoMs = estado.sectores.ultimoTiempoMs
+                        )
                     )
-                )
-
+                } else {
+                    val sectoresReiniciados = sectoresMarcados.map { sector -> sector.copy(tiempoMs = 0L) }
+                    estado.copy(
+                        sectores = estado.sectores.copy(
+                            sectores = sectoresReiniciados,
+                            inicioSistemaMs = ahora,
+                            tiempoActualMs = 0L,
+                            ultimoTiempoMs = totalMs
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -64,11 +78,11 @@ class SectoresActions(
                 sectores = estado.sectores.copy(
                     sectores = sectoresReiniciados,
                     inicioSistemaMs = null,
-                    tiempoActualMs = 0L
+                    tiempoActualMs = 0L,
+                    ultimoTiempoMs = 0L
                 )
             )
         }
-    }
     }
 }
 

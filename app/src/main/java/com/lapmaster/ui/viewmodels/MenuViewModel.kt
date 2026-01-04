@@ -131,6 +131,7 @@ class ModeloVistaLapMaster : ViewModel() {
     private val _estadoUi = MutableStateFlow(estadoInicial)
     val estadoUi: StateFlow<EstadoAplicacionUi> = _estadoUi
     private val tickIntervalMs = 10L
+    private val idleIntervalMs = 200L
     private val climaApi = ClimaApi()
 
     val navegacion = NavegacionActions(_estadoUi::update)
@@ -223,15 +224,21 @@ class ModeloVistaLapMaster : ViewModel() {
     private fun iniciarTickerCronometros() {
         viewModelScope.launch(Dispatchers.Default) {
             while (true) {
-                delay(tickIntervalMs)
+                val estadoActual = _estadoUi.value
+                val hayCorriendo = estadoActual.vueltas.pilotos.any { it.corriendo }
+                val sectoresActivos = estadoActual.sectores.inicioSistemaMs != null &&
+                    estadoActual.sectores.sectores.any { it.tiempoMs == 0L }
+                delay(if (hayCorriendo || sectoresActivos) tickIntervalMs else idleIntervalMs)
+                if (!hayCorriendo && !sectoresActivos) continue
+
                 val ahora = SystemClock.elapsedRealtime()
                 _estadoUi.update { estado ->
-                    val hayCorriendo = estado.vueltas.pilotos.any { it.corriendo }
-                    val sectoresActivos = estado.sectores.inicioSistemaMs != null &&
+                    val hayCorriendoActual = estado.vueltas.pilotos.any { it.corriendo }
+                    val sectoresActivosActual = estado.sectores.inicioSistemaMs != null &&
                         estado.sectores.sectores.any { it.tiempoMs == 0L }
-                    if (!hayCorriendo && !sectoresActivos) return@update estado
+                    if (!hayCorriendoActual && !sectoresActivosActual) return@update estado
 
-                    val pilotosActualizados = if (hayCorriendo) {
+                    val pilotosActualizados = if (hayCorriendoActual) {
                         estado.vueltas.pilotos.map { vuelta ->
                             if (!vuelta.corriendo) return@map vuelta
                             val inicio = vuelta.inicioSistemaMs ?: ahora
@@ -245,7 +252,7 @@ class ModeloVistaLapMaster : ViewModel() {
                         estado.vueltas.pilotos
                     }
 
-                    val sectoresActualizados = if (sectoresActivos) {
+                    val sectoresActualizados = if (sectoresActivosActual) {
                         val inicio = estado.sectores.inicioSistemaMs ?: ahora
                         estado.sectores.copy(
                             inicioSistemaMs = inicio,

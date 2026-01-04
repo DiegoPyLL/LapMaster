@@ -1,14 +1,14 @@
-#Fri Jan 02 18:23:49 CLST 2026
-base.0=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.2=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\10\\classes.dex
-base.3=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
-base.4=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\3\\classes.dex
-base.5=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\5\\classes.dex
-base.6=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
-base.7=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\8\\classes.dex
-base.8=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\9\\classes.dex
-base.9=C\:\\Users\\Laptop\\Desktop\\Trabajos\\ProyectosPersonales\\LapMaster\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+#Sat Jan 03 21:31:27 CLST 2026
+base.0=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.2=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\10\\classes.dex
+base.3=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
+base.4=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\3\\classes.dex
+base.5=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\5\\classes.dex
+base.6=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
+base.7=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\8\\classes.dex
+base.8=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\9\\classes.dex
+base.9=D\:\\Trabajos\\Proyectos Personales\\LapMaster\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=10/classes.dex

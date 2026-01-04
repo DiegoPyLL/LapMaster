@@ -13,7 +13,8 @@ data class VueltaPilotoUi(
     val piloto: PilotoUi,
     val tiempoMs: Long = 0L,
     val corriendo: Boolean = false,
-    val inicioSistemaMs: Long? = null
+    val inicioSistemaMs: Long? = null,
+    val vueltas: Int = 0
 )
 
 data class AccionMenuUi(val titulo: String, val color: Long)
@@ -82,7 +83,8 @@ data class EstadoSectoresUi(
     val piloto: PilotoUi? = null,
     val sectores: List<SectorUi> = emptyList(),
     val inicioSistemaMs: Long? = null,
-    val tiempoActualMs: Long = 0L
+    val tiempoActualMs: Long = 0L,
+    val ultimoTiempoMs: Long = 0L
 )
 
 data class EstadoGraficasUi(

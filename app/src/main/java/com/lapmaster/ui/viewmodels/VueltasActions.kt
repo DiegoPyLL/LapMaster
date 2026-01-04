@@ -43,7 +43,12 @@ class VueltasActions(
                         if (!vuelta.corriendo) {
                             vuelta.copy(corriendo = true, inicioSistemaMs = ahora)
                         } else {
-                            vuelta.copy(tiempoMs = 0L, corriendo = true, inicioSistemaMs = ahora)
+                            vuelta.copy(
+                                tiempoMs = 0L,
+                                corriendo = true,
+                                inicioSistemaMs = ahora,
+                                vueltas = vuelta.vueltas + 1
+                            )
                         }
                     }
                 )
@@ -57,7 +62,12 @@ class VueltasActions(
                 vueltas = estado.vueltas.copy(
                     pilotos = estado.vueltas.pilotos.map { vuelta ->
                         if (vuelta.piloto.id == pilotoId) {
-                            vuelta.copy(tiempoMs = 0L, corriendo = false, inicioSistemaMs = null)
+                            vuelta.copy(
+                                tiempoMs = 0L,
+                                corriendo = false,
+                                inicioSistemaMs = null,
+                                vueltas = 0
+                            )
                         } else vuelta
                     }
                 )
