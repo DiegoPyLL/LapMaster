@@ -4,6 +4,7 @@ import com.lapmaster.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+import android.os.SystemClock
 
 data class RespuestaClima(
     val ubicacion: String,
@@ -23,7 +24,15 @@ data class RespuestaClima(
 class ClimaApi(
     private val client: OkHttpClient = OkHttpClient()
 ) {
+    private var ultimaConsultaMs = 0L
+    private var ultimoResultado: RespuestaClima? = null
+    private val intervaloMinimoMs = 60_000L
+
     fun obtenerClima(lat: Double, lon: Double, lang: String = "es"): ResultadoClima {
+        val ahora = SystemClock.elapsedRealtime()
+        if (ahora - ultimaConsultaMs < intervaloMinimoMs) {
+            ultimoResultado?.let { return ResultadoClima.Ok(it) }
+        }
         val apiKey = BuildConfig.OPEN_WEATHER_API_KEY
         if (apiKey.isEmpty()) {
             return ResultadoClima.Error("Falta OPEN_WEATHER_API_KEY en local.properties")
@@ -63,8 +72,7 @@ class ClimaApi(
                 val vientoVel = wind?.optDouble("speed")?.toFloat()
                 val vientoRafaga = wind?.optDouble("gust")?.toFloat()
 
-                ResultadoClima.Ok(
-                    RespuestaClima(
+                val respuesta = RespuestaClima(
                         ubicacion = ciudad,
                         descripcion = descripcion,
                         temperaturaC = tempC,
@@ -78,7 +86,9 @@ class ClimaApi(
                         nubosidad = nubosidad,
                         lluviaMmHora = lluvia
                     )
-                )
+                ultimaConsultaMs = ahora
+                ultimoResultado = respuesta
+                ResultadoClima.Ok(respuesta)
             }
         } catch (e: Exception) {
             ResultadoClima.Error("Error de red: ${e.message}")

@@ -21,7 +21,25 @@ data class AccionMenuUi(val titulo: String, val color: Long)
 
 data class SectorUi(val etiqueta: String, val tiempoMs: Long, val color: Long)
 
-data class SerieGraficaUi(val nombre: String, val color: Long, val valores: List<Float>)
+data class VueltaSectoresUi(
+    val numero: Int,
+    val tiemposMs: List<Long>,
+    val totalMs: Long
+)
+
+data class SerieGraficaUi(
+    val pilotoId: Int,
+    val nombre: String,
+    val color: Long,
+    val valores: List<Float>
+)
+
+data class TandaUi(
+    val id: Int,
+    val nombre: String,
+    val series: List<SerieGraficaUi> = emptyList(),
+    val finalizada: Boolean = false
+)
 
 data class EntradaHistorialUi(
     val etiquetaDia: String,
@@ -50,6 +68,7 @@ data class GpsUi(
     val precisionMetros: Float,
     val latitud: Double? = null,
     val longitud: Double? = null,
+    val altitudMetros: Double? = null,
     val rumboGrados: Float? = null
 )
 
@@ -83,14 +102,16 @@ data class EstadoSectoresUi(
     val piloto: PilotoUi? = null,
     val sectores: List<SectorUi> = emptyList(),
     val inicioSistemaMs: Long? = null,
+    val enPausa: Boolean = false,
     val tiempoActualMs: Long = 0L,
-    val ultimoTiempoMs: Long = 0L
+    val ultimoTiempoMs: Long = 0L,
+    val historial: List<VueltaSectoresUi> = emptyList()
 )
 
 data class EstadoGraficasUi(
-    val tanda: List<String> = emptyList(),
-    val tandaSeleccionada: String = "",
-    val series: List<SerieGraficaUi> = emptyList(),
+    val tandas: List<TandaUi> = emptyList(),
+    val tandaSeleccionadaId: Int? = null,
+    val tandaActivaId: Int? = null,
     val historial: List<EntradaHistorialUi> = emptyList()
 )
 
@@ -107,3 +128,25 @@ data class EstadoAplicacionUi(
 )
 
 enum class Pantalla { VUELTAS, MENU, SECTORES, CLIMA, GRAFICAS }
+
+fun PilotoUi.nombreParaGrafica(): String {
+    val numeroLimpio = numero.trim()
+    return if (numeroLimpio.isNotBlank()) "$nombre #$numeroLimpio" else nombre
+}
+
+fun crearTandaUi(id: Int, pilotos: List<PilotoUi>, finalizada: Boolean = false): TandaUi {
+    val series = pilotos.map { piloto ->
+        SerieGraficaUi(
+            pilotoId = piloto.id,
+            nombre = piloto.nombreParaGrafica(),
+            color = piloto.color,
+            valores = emptyList()
+        )
+    }
+    return TandaUi(
+        id = id,
+        nombre = "Tanda $id",
+        series = series,
+        finalizada = finalizada
+    )
+}

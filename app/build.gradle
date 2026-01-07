@@ -14,7 +14,6 @@ if (localPropsFile.exists()) {
 def openWeatherKey = localProps.getProperty("OPEN_WEATHER_API_KEY", System.getenv("OPEN_WEATHER_API_KEY") ?: "")
 
 
-// todo verificar las versiones
 android {
     namespace "com.lapmaster"
     compileSdk 34

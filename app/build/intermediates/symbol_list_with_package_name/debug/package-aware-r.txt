@@ -53,6 +53,7 @@ drawable ic_call_answer_video
 drawable ic_call_answer_video_low
 drawable ic_call_decline
 drawable ic_call_decline_low
+drawable ic_launcher_foreground_inset
 drawable image
 drawable notification_action_background
 drawable notification_bg
@@ -67,6 +68,7 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable splash_transparent
 id accessibility_action_clickable_span
 id accessibility_custom_action_0
 id accessibility_custom_action_1
@@ -259,6 +261,7 @@ style TextAppearance_Compat_Notification_Line2
 style TextAppearance_Compat_Notification_Time
 style TextAppearance_Compat_Notification_Title
 style Theme_LapMaster
+style Theme_LapMaster_Splash
 style Widget_Compat_NotificationActionContainer
 style Widget_Compat_NotificationActionText
 styleable Capability queryPatterns shortcutMatchRequired

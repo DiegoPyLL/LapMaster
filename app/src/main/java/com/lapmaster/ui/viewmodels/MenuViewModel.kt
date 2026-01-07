@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.lapmaster.apis.ClimaApi
 import com.lapmaster.apis.ResultadoClima
 import com.lapmaster.ui.model.ClimaUi
-import com.lapmaster.ui.model.EntradaHistorialUi
 import com.lapmaster.ui.model.EstadoAplicacionUi
 import com.lapmaster.ui.model.EstadoConfiguracionUi
 import com.lapmaster.ui.model.EstadoGraficasUi
@@ -19,8 +18,8 @@ import com.lapmaster.ui.model.PilotoUi
 import com.lapmaster.ui.model.PreferenciaMano
 import com.lapmaster.ui.model.ResumenUi
 import com.lapmaster.ui.model.SectorUi
-import com.lapmaster.ui.model.SerieGraficaUi
 import com.lapmaster.ui.model.VueltaPilotoUi
+import com.lapmaster.ui.model.crearTandaUi
 import com.lapmaster.ui.model.paletaPilotos
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -33,6 +32,7 @@ import java.util.Locale
 class ModeloVistaLapMaster : ViewModel() {
 
     private val pilotosIniciales = crearPilotosIniciales()
+    private val tandaInicial = crearTandaUi(id = 1, pilotos = pilotosIniciales)
     private var siguienteIdPiloto = (pilotosIniciales.maxOfOrNull { it.id } ?: 0) + 1
     private fun consumirSiguienteId(): Int {
         val id = siguienteIdPiloto
@@ -59,46 +59,9 @@ class ModeloVistaLapMaster : ViewModel() {
         ),
 
         graficas = EstadoGraficasUi(
-            tanda = listOf("1ra Tanda", "2da Tanda", "3ra Tanda"),
-            tandaSeleccionada = "1ra Tanda",
-            series = listOf(
-                SerieGraficaUi(
-                    "Piloto 1",
-                    0xFFFF5E5EL,
-                    listOf(
-                        7.9f,
-                        6.8f, 6.1f, 5.3f, 5.9f, 5.2f, 4.9f, 5.6f
-                    )
-                ),
-                SerieGraficaUi(
-                    "Piloto 2",
-                    0xFF53E38EL,
-                    listOf(
-                        9.4f,
-                        7.1f, 6.7f, 5.2f, 5.8f, 5.6f, 5.3f, 5.0f
-                    )
-                ),
-                SerieGraficaUi(
-                    "Piloto 3",
-                    0xFFFFA726L,
-                    listOf(
-                        9.8f, 8.9f,
-                        7.0f, 6.5f, 5.6f, 4.6f, 4.1f, 4.5f, 4.2f
-                    )
-                ),
-                SerieGraficaUi(
-                    "Piloto 4",
-                    0xFF3BA3FFL,
-                    listOf(
-                        7.0f, 6.5f, 5.6f, 4.6f, 4.1f, 4.5f, 4.2f
-                    )
-                )
-            ),
-            historial = listOf(
-                EntradaHistorialUi(etiquetaDia = "Hoy", mejorVuelta = "1:30.12", vueltas = 12),
-                EntradaHistorialUi(etiquetaDia = "Ayer", mejorVuelta = "1:31.05", vueltas = 18),
-                EntradaHistorialUi(etiquetaDia = "27/10", mejorVuelta = "1:30.80", vueltas = 10)
-            )
+            tandas = listOf(tandaInicial),
+            tandaSeleccionadaId = tandaInicial.id,
+            tandaActivaId = tandaInicial.id
         ),
         clima = ClimaUi(
             ubicacion = "Esperando GPS",
@@ -151,26 +114,26 @@ class ModeloVistaLapMaster : ViewModel() {
         )
     }
 
-    // todo revisar el locale.us para ajustarlo al pais?
     private fun cargarClima(latitud: Double, longitud: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             when (val resultado = climaApi.obtenerClima(latitud, longitud, lang = "es")) {
                 is ResultadoClima.Ok -> {
                     val datos = resultado.datos
+                    val locale = Locale.getDefault()
                     val viento = datos.vientoDireccion?.let { convertirAGradosCardinal(it) } ?: "--"
                     val vientoVelocidad = datos.vientoVelocidadMs?.let {
-                        String.Companion.format(Locale.US, "%.1f km/h", it * 3.6f)
+                        String.Companion.format(locale, "%.1f km/h", it * 3.6f)
                     } ?: "--"
                     val rafaga = datos.vientoRafagaMs?.let {
-                        String.Companion.format(Locale.US, "%.1f km/h", it * 3.6f)
+                        String.Companion.format(locale, "%.1f km/h", it * 3.6f)
                     } ?: "--"
                     val presion = datos.presion?.let { "$it hPa" } ?: "--"
                     val visibilidad = datos.visibilidad?.let {
-                        String.Companion.format(Locale.US, "%.1f km", it / 1000f)
+                        String.Companion.format(locale, "%.1f km", it / 1000f)
                     } ?: "--"
                     val nubosidad = datos.nubosidad?.let { "$it%" } ?: "--"
                     val lluvia = datos.lluviaMmHora?.let {
-                        String.Companion.format(Locale.US, "%.1f mm/h", it)
+                        String.Companion.format(locale, "%.1f mm/h", it)
                     } ?: "--"
 
                     _estadoUi.update { estado ->
@@ -179,10 +142,10 @@ class ModeloVistaLapMaster : ViewModel() {
                                 ubicacion = datos.ubicacion.ifBlank { "Ubicación actual" },
                                 condicion = datos.descripcion.ifBlank { "Sin datos" },
                                 temperatura = if (datos.temperaturaC.isFinite()) {
-                                    String.Companion.format(Locale.US, "%.1f°C", datos.temperaturaC)
+                                    String.Companion.format(locale, "%.1f°C", datos.temperaturaC)
                                 } else "--",
                                 sensacionTermica = datos.sensacionTermicaC?.let {
-                                    String.Companion.format(Locale.US, "%.1f°C", it)
+                                    String.Companion.format(locale, "%.1f°C", it)
                                 } ?: "--",
                                 direccionVientoGrados = datos.vientoDireccion,
                                 direccionViento = viento,
@@ -227,6 +190,7 @@ class ModeloVistaLapMaster : ViewModel() {
                 val estadoActual = _estadoUi.value
                 val hayCorriendo = estadoActual.vueltas.pilotos.any { it.corriendo }
                 val sectoresActivos = estadoActual.sectores.inicioSistemaMs != null &&
+                    !estadoActual.sectores.enPausa &&
                     estadoActual.sectores.sectores.any { it.tiempoMs == 0L }
                 delay(if (hayCorriendo || sectoresActivos) tickIntervalMs else idleIntervalMs)
                 if (!hayCorriendo && !sectoresActivos) continue
@@ -235,6 +199,7 @@ class ModeloVistaLapMaster : ViewModel() {
                 _estadoUi.update { estado ->
                     val hayCorriendoActual = estado.vueltas.pilotos.any { it.corriendo }
                     val sectoresActivosActual = estado.sectores.inicioSistemaMs != null &&
+                        !estado.sectores.enPausa &&
                         estado.sectores.sectores.any { it.tiempoMs == 0L }
                     if (!hayCorriendoActual && !sectoresActivosActual) return@update estado
 

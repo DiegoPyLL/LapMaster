@@ -6,6 +6,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +51,7 @@ import com.lapmaster.ui.theme.AmarilloCarreras
 import com.lapmaster.ui.theme.CianCarreras
 import com.lapmaster.ui.theme.RojoCarreras
 import com.lapmaster.ui.theme.VerdeCarreras
+import java.util.Locale
 import kotlin.math.roundToInt
 import kotlin.math.cos
 import kotlin.math.sin
@@ -63,17 +65,29 @@ fun BannerClima(
     gps: GpsUi,
     modifier: Modifier = Modifier,
     rumboDispositivoGrados: Float = 0f,
-    esHorizontal: Boolean = false
+    esHorizontal: Boolean = false,
+    pantallaCompleta: Boolean = false
 ) {
-    val textoPrimario = Color.Black
-    val textoSecundario = Color.Black.copy(alpha = 0.7f)
-    val bordeClaro = Color.Black.copy(alpha = 0.08f)
-    val fondoTarjeta = Color(0xFFF7F7F7)
+    val textoPrimario = MaterialTheme.colorScheme.onSurface
+    val textoSecundario = textoPrimario.copy(alpha = 0.7f)
+    val bordeClaro = textoPrimario.copy(alpha = 0.08f)
+    val fondoTarjeta = if (pantallaCompleta) {
+        MaterialTheme.colorScheme.background
+    } else {
+        Color(0xFFF7F7F7)
+    }
+    val fondoSeccion = MaterialTheme.colorScheme.surfaceVariant
 
     val metricaEspaciado = 6.dp
     val humedadValor = if (gps.tieneFijacion) "${clima.humedad}%" else "--"
+    val altitudValor = if (gps.tieneFijacion) {
+        gps.altitudMetros?.let { String.format(Locale.US, "%.0f m", it) } ?: "--"
+    } else {
+        "--"
+    }
     val metricasGrid = listOf(
         MetricaClimaItem(Icons.Outlined.WaterDrop, "Humedad del Aire", humedadValor),
+        MetricaClimaItem(Icons.Outlined.LocationOn, "Altitud", altitudValor),
         MetricaClimaItem(Icons.Outlined.Air, "Velocidad del Viento", vientoVelocidadTexto(clima)),
         MetricaClimaItem(Icons.Outlined.Speed, "Presion Atmosferica", clima.presion),
         MetricaClimaItem(Icons.Outlined.Cloud, "Nubosidad", clima.nubosidad)
@@ -81,103 +95,144 @@ fun BannerClima(
     val metricaLluvia = MetricaClimaItem(Icons.Outlined.WaterDrop, "Lluvia", clima.lluvia)
 
     Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        border = BorderStroke(1.dp, bordeClaro),
+        modifier = modifier,
+        shape = if (pantallaCompleta) RoundedCornerShape(0.dp) else RoundedCornerShape(14.dp),
+        border = if (pantallaCompleta) null else BorderStroke(1.dp, bordeClaro),
         colors = CardDefaults.cardColors(containerColor = fondoTarjeta)
     ) {
-        Column(
-            modifier = Modifier
-                .background(fondoTarjeta)
-                .padding(vertical = 12.dp, horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            EstadoGps(gps, textoPrimario)
-            if (esHorizontal) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val compacto = maxHeight < 620.dp
+            val espaciado = if (compacto) 10.dp else 16.dp
+            val paddingHorizontal = if (compacto) 16.dp else 22.dp
+            val paddingVertical = if (compacto) 14.dp else 20.dp
+            val tamanoBrujula = if (compacto) 88.dp else 110.dp
+            val distribucion = if (pantallaCompleta && !compacto) {
+                Arrangement.SpaceBetween
+            } else {
+                Arrangement.spacedBy(espaciado)
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(fondoTarjeta)
+                    .padding(horizontal = paddingHorizontal, vertical = paddingVertical),
+                verticalArrangement = distribucion
+            ) {
+                EstadoGps(gps, textoPrimario)
+                if (esHorizontal) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(espaciado),
+                        verticalAlignment = Alignment.Top
                     ) {
-                        EncabezadoClima(clima = clima, textoPrimario = textoPrimario, textoSecundario = textoSecundario)
-                        TemperaturaActual(clima = clima, textoPrimario = textoPrimario, textoSecundario = textoSecundario)
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(espaciado)
+                        ) {
+                            SeccionHeroClima(
+                                clima = clima,
+                                textoPrimario = textoPrimario,
+                                textoSecundario = textoSecundario,
+                                bordeClaro = bordeClaro,
+                                fondoSeccion = fondoSeccion,
+                                compacto = compacto
+                            )
+                            BrujulaViento(
+                                grados = clima.direccionVientoGrados,
+                                etiqueta = clima.direccionViento,
+                                rumboDispositivoGrados = rumboDispositivoGrados,
+                                tamano = tamanoBrujula,
+                                textoPrimario = textoPrimario,
+                                bordeClaro = bordeClaro
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(espaciado)
+                        ) {
+                            MetricaClimaColumna(metricasGrid, metricaEspaciado, textoPrimario, textoSecundario, bordeClaro)
+                            MetricaClima(metricaLluvia, textoPrimario, textoSecundario, bordeClaro, modifier = Modifier.fillMaxWidth())
+                        }
+                    }
+                } else {
+                    SeccionHeroClima(
+                        clima = clima,
+                        textoPrimario = textoPrimario,
+                        textoSecundario = textoSecundario,
+                        bordeClaro = bordeClaro,
+                        fondoSeccion = fondoSeccion,
+                        compacto = compacto
+                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         BrujulaViento(
                             grados = clima.direccionVientoGrados,
                             etiqueta = clima.direccionViento,
                             rumboDispositivoGrados = rumboDispositivoGrados,
-                            tamano = 90.dp,
+                            tamano = tamanoBrujula,
                             textoPrimario = textoPrimario,
                             bordeClaro = bordeClaro
                         )
                     }
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(metricaEspaciado)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(metricaEspaciado)
                     ) {
-                        MetricaClimaColumna(metricasGrid, metricaEspaciado, textoPrimario, textoSecundario, bordeClaro)
-                        MetricaClima(metricaLluvia, textoPrimario, textoSecundario, bordeClaro, modifier = Modifier.fillMaxWidth())
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(metricaEspaciado)
+                        ) {
+                            metricasGrid.filterIndexed { index, _ -> index % 2 == 0 }
+                                .forEach { item ->
+                                    MetricaClima(item, textoPrimario, textoSecundario, bordeClaro, modifier = Modifier.fillMaxWidth())
+                                }
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(metricaEspaciado)
+                        ) {
+                            metricasGrid.filterIndexed { index, _ -> index % 2 != 0 }
+                                .forEach { item ->
+                                    MetricaClima(item, textoPrimario, textoSecundario, bordeClaro, modifier = Modifier.fillMaxWidth())
+                                }
+                        }
                     }
+                    MetricaClima(metricaLluvia, textoPrimario, textoSecundario, bordeClaro, modifier = Modifier.fillMaxWidth())
                 }
-            } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        EncabezadoClima(clima = clima, textoPrimario = textoPrimario, textoSecundario = textoSecundario)
-                        TemperaturaActual(
-                            clima,
-                            textoPrimario = textoPrimario,
-                            textoSecundario = textoSecundario,
-                            modifier = Modifier
-                                .align(Alignment.Start)
-                                .padding(start = 10.dp)
-                        )
-                    }
-                    BrujulaViento(
-                        grados = clima.direccionVientoGrados,
-                        etiqueta = clima.direccionViento,
-                        rumboDispositivoGrados = rumboDispositivoGrados,
-                        tamano = 84.dp,
-                        textoPrimario = textoPrimario,
-                        bordeClaro = bordeClaro
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(metricaEspaciado)
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(metricaEspaciado)
-                    ) {
-                        metricasGrid.filterIndexed { index, _ -> index % 2 == 0 }
-                            .forEach { item ->
-                                MetricaClima(item, textoPrimario, textoSecundario, bordeClaro, modifier = Modifier.fillMaxWidth())
-                            }
-                    }
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(metricaEspaciado)
-                    ) {
-                        metricasGrid.filterIndexed { index, _ -> index % 2 != 0 }
-                            .forEach { item ->
-                                MetricaClima(item, textoPrimario, textoSecundario, bordeClaro, modifier = Modifier.fillMaxWidth())
-                            }
-                    }
-                }
-                MetricaClima(metricaLluvia, textoPrimario, textoSecundario, bordeClaro, modifier = Modifier.fillMaxWidth())
             }
+        }
+    }
+}
+
+@Composable
+private fun SeccionHeroClima(
+    clima: ClimaUi,
+    textoPrimario: Color,
+    textoSecundario: Color,
+    bordeClaro: Color,
+    fondoSeccion: Color,
+    compacto: Boolean
+) {
+    val padding = if (compacto) 10.dp else 14.dp
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = fondoSeccion,
+        border = BorderStroke(1.dp, bordeClaro)
+    ) {
+        Column(
+            modifier = Modifier.padding(padding),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            EncabezadoClima(clima = clima, textoPrimario = textoPrimario, textoSecundario = textoSecundario)
+            TemperaturaActual(
+                clima = clima,
+                textoPrimario = textoPrimario,
+                textoSecundario = textoSecundario,
+                tamanoTexto = if (compacto) 30.sp else 36.sp
+            )
         }
     }
 }
@@ -233,7 +288,8 @@ private fun TemperaturaActual(
     clima: ClimaUi,
     textoPrimario: Color,
     textoSecundario: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    tamanoTexto: androidx.compose.ui.unit.TextUnit = 32.sp
 ) {
     Column(
         modifier = modifier,
@@ -242,7 +298,7 @@ private fun TemperaturaActual(
         Text(
             text = clima.temperatura.ifBlank { "--°C" },
             color = textoPrimario,
-            fontSize = 32.sp,
+            fontSize = tamanoTexto,
             fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Bold
         )
@@ -293,12 +349,12 @@ private fun BrujulaViento(
                 androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
                     val radio = size.minDimension / 2f
                     drawCircle(
-                        color = Color.Black.copy(alpha = 0.12f),
+                        color = textoPrimario.copy(alpha = 0.12f),
                         radius = radio * 0.96f,
                         style = Stroke(width = 2.dp.toPx())
                     )
                     drawCircle(
-                        color = Color.Black.copy(alpha = 0.08f),
+                        color = textoPrimario.copy(alpha = 0.08f),
                         radius = radio * 0.7f,
                         style = Stroke(width = 1.dp.toPx())
                     )
@@ -333,7 +389,7 @@ private fun BrujulaViento(
                         cap = StrokeCap.Round
                     )
                     drawLine(
-                        color = Color.Black.copy(alpha = 0.4f),
+                        color = textoPrimario.copy(alpha = 0.4f),
                         start = centro.copy(y = centro.y - radio * 0.95f),
                         end = centro.copy(y = centro.y - radio * 0.8f),
                         strokeWidth = 3.dp.toPx(),

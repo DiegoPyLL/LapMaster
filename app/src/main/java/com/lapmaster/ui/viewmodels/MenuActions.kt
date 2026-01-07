@@ -1,9 +1,12 @@
 package com.lapmaster.ui.viewmodels
 
 import com.lapmaster.ui.model.EstadoAplicacionUi
+import com.lapmaster.ui.model.EstadoGraficasUi
 import com.lapmaster.ui.model.PilotoUi
 import com.lapmaster.ui.model.PreferenciaMano
+import com.lapmaster.ui.model.SerieGraficaUi
 import com.lapmaster.ui.model.VueltaPilotoUi
+import com.lapmaster.ui.model.nombreParaGrafica
 
 class MenuActions(
     private val updateEstado: ((EstadoAplicacionUi) -> EstadoAplicacionUi) -> Unit,
@@ -107,7 +110,41 @@ class MenuActions(
         val pilotoSectores = estado.sectores.piloto?.let { mapaPilotos[it.id] } ?: pilotosLimitados.firstOrNull()
         val sectoresActualizados = estado.sectores.copy(piloto = pilotoSectores)
         val menuActualizado = estado.menu.copy(pilotos = pilotosLimitados)
+        val graficasActualizadas = sincronizarTandaActiva(estado.graficas, pilotosLimitados)
 
-        return estado.copy(menu = menuActualizado, vueltas = vueltasActualizadas, sectores = sectoresActualizados)
+        return estado.copy(
+            menu = menuActualizado,
+            vueltas = vueltasActualizadas,
+            sectores = sectoresActualizados,
+            graficas = graficasActualizadas
+        )
+    }
+
+    private fun sincronizarTandaActiva(
+        graficas: EstadoGraficasUi,
+        pilotos: List<PilotoUi>
+    ): EstadoGraficasUi {
+        val activaId = graficas.tandaActivaId ?: return graficas
+        if (graficas.tandas.isEmpty()) return graficas
+        val tandasActualizadas = graficas.tandas.map { tanda ->
+            if (tanda.id != activaId || tanda.finalizada) return@map tanda
+            val seriesExistentes = tanda.series.associateBy { it.pilotoId }
+            val seriesActualizadas = pilotos.map { piloto ->
+                val nombre = piloto.nombreParaGrafica()
+                val existente = seriesExistentes[piloto.id]
+                if (existente == null) {
+                    SerieGraficaUi(
+                        pilotoId = piloto.id,
+                        nombre = nombre,
+                        color = piloto.color,
+                        valores = emptyList()
+                    )
+                } else {
+                    existente.copy(nombre = nombre, color = piloto.color)
+                }
+            }
+            tanda.copy(series = seriesActualizadas)
+        }
+        return graficas.copy(tandas = tandasActualizadas)
     }
 }

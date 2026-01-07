@@ -13,8 +13,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,8 +41,11 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -49,7 +53,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.snapshotFlow
 import com.lapmaster.ui.viewmodels.ModeloVistaLapMaster
+import com.lapmaster.ui.components.PantallaConAccionActiva
 import com.lapmaster.ui.model.Pantalla
 import com.lapmaster.ui.screens.PantallaGraficas
 import com.lapmaster.ui.screens.PantallaClima
@@ -58,6 +67,7 @@ import com.lapmaster.ui.screens.PantallaSectores
 import com.lapmaster.ui.screens.PantallaVueltas
 import com.lapmaster.ui.theme.TemaLapMaster
 import com.lapmaster.ui.theme.VerdeCarrerasOscuro
+import kotlinx.coroutines.flow.collectLatest
 
 private data class ElementoNavegacion(
     val pantalla: Pantalla,
@@ -91,7 +101,8 @@ class ActividadPrincipal : ComponentActivity() {
                 tieneFijacion = false,
                 precisionMetros = Float.MAX_VALUE,
                 latitud = null,
-                longitud = null
+                longitud = null,
+                altitudMetros = null
             )
         }
     }
@@ -131,7 +142,8 @@ class ActividadPrincipal : ComponentActivity() {
                     gps.tieneFijacion,
                     gps.precisionMetros,
                     gps.latitud,
-                    gps.longitud
+                    gps.longitud,
+                    gps.altitudMetros
                 )
             }
         )
@@ -161,7 +173,6 @@ class ActividadPrincipal : ComponentActivity() {
     }
 
     private val listenerBrjula = object : SensorEventListener {
-        @RequiresApi(Build.VERSION_CODES.R)
         override fun onSensorChanged(event: SensorEvent) {
             if (event.sensor.type != Sensor.TYPE_ROTATION_VECTOR) return
             SensorManager.getRotationMatrixFromVector(matrizRotacion, event.values)
@@ -175,10 +186,8 @@ class ActividadPrincipal : ComponentActivity() {
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun ajustarMatrizPorRotacionPantalla() {
-        // todo reemplazar por una versión no depreciada
-        val rotation = windowManager.defaultDisplay?.rotation ?: display?.rotation ?: Surface.ROTATION_0
+        val rotation = obtenerRotacionPantalla()
         when (rotation) {
             Surface.ROTATION_90 -> SensorManager.remapCoordinateSystem(
                 matrizRotacion,
@@ -201,21 +210,70 @@ class ActividadPrincipal : ComponentActivity() {
             else -> System.arraycopy(matrizRotacion, 0, matrizRotacionAjustada, 0, matrizRotacion.size)
         }
     }
+
+    private fun obtenerRotacionPantalla(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display?.rotation ?: Surface.ROTATION_0
+        } else {
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.rotation
+        }
+    }
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
     val estadoUi by modeloVista.estadoUi.collectAsState()
     val pantallaSeleccionada = estadoUi.pantallaSeleccionada
     val configuracion = LocalConfiguration.current
     val esHorizontal = configuracion.orientation == Configuration.ORIENTATION_LANDSCAPE
     val hayCronometroCorriendo = estadoUi.vueltas.pilotos.any { it.corriendo }
+    val haySectoresActivos = estadoUi.sectores.inicioSistemaMs != null &&
+        !estadoUi.sectores.enPausa &&
+        estadoUi.sectores.sectores.any { it.tiempoMs == 0L }
+    val accionActiva = hayCronometroCorriendo || haySectoresActivos
+    val pantallas = listOf(
+        Pantalla.MENU,
+        Pantalla.CLIMA,
+        Pantalla.VUELTAS,
+        Pantalla.SECTORES,
+        Pantalla.GRAFICAS
+    )
+    val indiceSeleccionado = pantallas.indexOf(pantallaSeleccionada).coerceAtLeast(0)
+    val pagerState = rememberPagerState(
+        initialPage = indiceSeleccionado,
+        pageCount = { pantallas.size }
+    )
+    val pantallaSeleccionadaActual = rememberUpdatedState(pantallaSeleccionada)
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.isScrollInProgress }
+            .collectLatest { enScroll ->
+                if (enScroll) return@collectLatest
+                val page = pagerState.currentPage
+                val nuevaPantalla = pantallas.getOrNull(page) ?: return@collectLatest
+                if (nuevaPantalla != pantallaSeleccionadaActual.value) {
+                    modeloVista.navegacion.alSeleccionarPantalla(nuevaPantalla)
+                }
+            }
+    }
+
+    LaunchedEffect(pantallaSeleccionada) {
+        val objetivo = pantallas.indexOf(pantallaSeleccionada)
+        if (objetivo != -1 && objetivo != pagerState.currentPage) {
+            pagerState.animateScrollToPage(objetivo)
+        }
+    }
+
     val ocultarBarra = esHorizontal && pantallaSeleccionada == Pantalla.VUELTAS && hayCronometroCorriendo
     val insetsContenido = if (ocultarBarra) {
         WindowInsets.systemBars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
     } else {
         WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)
     }
+
+    PantallaConAccionActiva(activo = accionActiva)
 
     TemaLapMaster(usarTemaOscuro = estadoUi.configuraciones.temaOscuro) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -230,8 +288,13 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
                     }
                 }
             ) { rellenoInterno ->
-                Box(modifier = Modifier.padding(rellenoInterno)) {
-                    when (pantallaSeleccionada) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .padding(rellenoInterno)
+                        .fillMaxSize()
+                ) { page ->
+                    when (pantallas.getOrNull(page)) {
                         Pantalla.VUELTAS -> PantallaVueltas(
                             estado = estadoUi.vueltas,
                             configuraciones = estadoUi.configuraciones,
@@ -239,7 +302,8 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
                             alVolverMenu = { modeloVista.navegacion.alSeleccionarPantalla(Pantalla.MENU) },
                             alAlternarCronometro = { modeloVista.vueltas.alAlternarCronometro(it) },
                             alMarcarVuelta = { modeloVista.vueltas.alMarcarVuelta(it) },
-                            alResetearCronometro = { modeloVista.vueltas.alResetearCronometro(it) }
+                            alResetearCronometro = { modeloVista.vueltas.alResetearCronometro(it) },
+                            alTerminarTanda = { modeloVista.vueltas.alTerminarTanda() }
                         )
 
                         Pantalla.MENU -> PantallaMenu(
@@ -266,6 +330,7 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
                             configuraciones = estadoUi.configuraciones,
                             alIniciarCronometro = { modeloVista.sectores.alIniciarCronometro() },
                             alMarcarSector = { modeloVista.sectores.alMarcarSector(it) },
+                            alAlternarPausa = { modeloVista.sectores.alAlternarPausa() },
                             alReiniciarSectores = { modeloVista.sectores.alReiniciarSectores() }
                         )
 
@@ -274,12 +339,12 @@ private fun AplicacionLapMaster(modeloVista: ModeloVistaLapMaster) {
                             gps = estadoUi.gps
                         )
 
-                        // todo cambiar el nombre de la funcion para quitar anio,
-                        //  ya no se usa
                         Pantalla.GRAFICAS -> PantallaGraficas(
                             estado = estadoUi.graficas,
-                            alSeleccionarAnio = { modeloVista.graficas.alSeleccionarAnio(it) }
+                            alSeleccionarTanda = { modeloVista.graficas.alSeleccionarTanda(it) }
                         )
+
+                        null -> Unit
                     }
                 }
             }
@@ -309,7 +374,6 @@ private fun BarraMenuSuperior(
 
 
 
-    // todo modificar el ancho de los íconos para que permita usar todo el cuadro, tiene mucho padding
     TabRow(
         selectedTabIndex = indiceSeleccionado,
         containerColor = Color(0xFF101010),
@@ -333,15 +397,26 @@ private fun BarraMenuSuperior(
                 onClick = { alSeleccionar(elemento.pantalla) },
                 selectedContentColor = Color.White,
                 unselectedContentColor = Color.LightGray,
-                text = { Text(elemento.etiqueta, fontSize = tamanoTexto) },
-                icon = {
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 4.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Icon(
                         imageVector = elemento.icono,
                         contentDescription = elemento.etiqueta,
                         modifier = Modifier.size(tamanoIcono)
                     )
+                    Text(
+                        text = elemento.etiqueta,
+                        fontSize = tamanoTexto,
+                        maxLines = 1
+                    )
                 }
-            )
+            }
         }
     }
 }

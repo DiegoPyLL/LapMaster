@@ -34,7 +34,8 @@ class ProveedorGpsNativo(
                     tieneFijacion = true,
                     precisionMetros = location.accuracy,
                     latitud = location.latitude,
-                    longitud = location.longitude
+                    longitud = location.longitude,
+                    altitudMetros = location.altitude
                 )
             )
         }
@@ -124,7 +125,8 @@ class ProveedorGpsNativo(
                 tieneFijacion = true,
                 precisionMetros = location.accuracy,
                 latitud = location.latitude,
-                longitud = location.longitude
+                longitud = location.longitude,
+                altitudMetros = location.altitude
             )
         )
     }

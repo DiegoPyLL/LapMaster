@@ -5,10 +5,10 @@ import com.lapmaster.ui.model.EstadoAplicacionUi
 class GraficasActions(
     private val updateEstado: ((EstadoAplicacionUi) -> EstadoAplicacionUi) -> Unit
 ) {
-    fun alSeleccionarAnio(tanda: String) {
+    fun alSeleccionarTanda(tandaId: Int) {
         updateEstado { estado ->
-            if (tanda in estado.graficas.tanda) {
-                estado.copy(graficas = estado.graficas.copy(tandaSeleccionada = tanda))
+            if (estado.graficas.tandas.any { it.id == tandaId }) {
+                estado.copy(graficas = estado.graficas.copy(tandaSeleccionadaId = tandaId))
             } else estado
         }
     }

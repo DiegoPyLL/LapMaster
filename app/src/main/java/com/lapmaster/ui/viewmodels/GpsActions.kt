@@ -17,14 +17,21 @@ class GpsActions(
     private val intervaloMinimoMs = 120_000L
     private val distanciaMinimaMetros = 200.0
 
-    fun alActualizarEstadoGps(tieneFijacion: Boolean, precisionMetros: Float, latitud: Double?, longitud: Double?) {
+    fun alActualizarEstadoGps(
+        tieneFijacion: Boolean,
+        precisionMetros: Float,
+        latitud: Double?,
+        longitud: Double?,
+        altitudMetros: Double?
+    ) {
         updateEstado { estado ->
             estado.copy(
                 gps = estado.gps.copy(
                     tieneFijacion = tieneFijacion,
                     precisionMetros = precisionMetros,
                     latitud = latitud,
-                    longitud = longitud
+                    longitud = longitud,
+                    altitudMetros = if (tieneFijacion) altitudMetros else null
                 ),
                 clima = estado.clima.copy(
                     ubicacion = if (tieneFijacion) estado.clima.ubicacion else "Ubicación no disponible",

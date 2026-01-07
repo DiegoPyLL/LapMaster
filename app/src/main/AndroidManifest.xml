@@ -14,15 +14,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LapMaster">
         <activity
-            android:name=".ActividadPrincipal"
+            android:name=".ActividadSplash"
             android:exported="true"
-            android:theme="@style/Theme.LapMaster">
+            android:theme="@style/Theme.LapMaster.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ActividadPrincipal"
+            android:exported="false"
+            android:theme="@style/Theme.LapMaster" />
     </application>
 
 </manifest>

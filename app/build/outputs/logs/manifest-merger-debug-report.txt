@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:2:1-28:12
-INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:2:1-28:12
-INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:2:1-28:12
-INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:2:1-28:12
+ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:2:1-32:12
+INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:2:1-32:12
+INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:2:1-32:12
+INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:2:1-32:12
 MERGED from [androidx.compose.material3:material3:1.1.2] C:\Users\Diego\.gradle\caches\9.0-milestone-1\transforms\c8f6082f30414883521820144cd5d204\transformed\jetified-material3-1.1.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.compose.material:material-ripple-android:1.5.4] C:\Users\Diego\.gradle\caches\9.0-milestone-1\transforms\d95d27c18160d935102a0182d4f36a1f\transformed\jetified-material-ripple-release\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material:material-icons-core-android:1.5.4] C:\Users\Diego\.gradle\caches\9.0-milestone-1\transforms\d8b696b376f30f579eb9d81678b31cec\transformed\jetified-material-icons-core-release\AndroidManifest.xml:2:1-7:12
@@ -75,8 +75,8 @@ ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManife
 	android:name
 		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:7:22-76
 application
-ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:9:5-26:19
-INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:9:5-26:19
+ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:9:5-30:19
+INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:9:5-30:19
 MERGED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\Diego\.gradle\caches\9.0-milestone-1\transforms\f8b18187a2ff641688f42f93aa60068a\transformed\jetified-ui-tooling-release\AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\Diego\.gradle\caches\9.0-milestone-1\transforms\f8b18187a2ff641688f42f93aa60068a\transformed\jetified-ui-tooling-release\AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\Diego\.gradle\caches\9.0-milestone-1\transforms\87cc6ea18c9ea89bbbc1792d4e1362bb\transformed\jetified-ui-test-manifest-1.5.4\AndroidManifest.xml:22:5-26:19
@@ -109,14 +109,14 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Diego\.gradle\cach
 		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:10:9-35
 	android:theme
 		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:15:9-47
-activity#com.lapmaster.ActividadPrincipal
+activity#com.lapmaster.ActividadSplash
 ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:16:9-25:20
 	android:exported
 		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:18:13-36
 	android:theme
-		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:19:13-51
+		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:19:13-58
 	android:name
-		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:17:13-47
+		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:17:13-44
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
 ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:20:13-24:29
 action#android.intent.action.MAIN
@@ -127,6 +127,14 @@ category#android.intent.category.LAUNCHER
 ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:23:17-77
 	android:name
 		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:23:27-74
+activity#com.lapmaster.ActividadPrincipal
+ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:26:9-29:54
+	android:exported
+		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:28:13-37
+	android:theme
+		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:29:13-51
+	android:name
+		ADDED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml:27:13-47
 uses-sdk
 INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Trabajos\Proyectos Personales\LapMaster\app\src\main\AndroidManifest.xml
