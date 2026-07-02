@@ -1,0 +1,896 @@
+LAPMASTER - REPORTE EXHAUSTIVO POR ARCHIVO
+==========================================
+
+ALCANCE
+- Incluye todos los archivos del proyecto listados por rg sin directorios de build ni metadata de Git/Gradle.
+- Excluye: .git/**, .gradle/**, build/**, app/build/** (generados o cache).
+- Nota: local.properties y varios archivos .idea/** contienen rutas o datos locales; se describen de forma general y con redaccion de valores sensibles.
+
+LISTA DE ARCHIVOS (orden)
+1) build.gradle
+2) gradlew.bat
+3) gradlew
+4) gradle.properties
+5) README.md
+6) local.properties
+7) settings.gradle
+8) .gitattributes
+9) .idea/gradle.xml
+10) .idea/deviceManager.xml
+11) .idea/deploymentTargetSelector.xml
+12) .idea/compiler.xml
+13) .idea/misc.xml
+14) .idea/migrations.xml
+15) .idea/markdown.xml
+16) app/build.gradle
+17) app/proguard-rules.pro
+18) .vscode/settings.json
+19) .idea/AndroidProjectSystem.xml
+20) .idea/.gitignore
+21) .idea/androidTestResultsUserPreferences.xml
+22) .idea/assetWizardSettings.xml
+23) .idea/icon.svg
+24) .idea/studiobot.xml
+25) .idea/runConfigurations.xml
+26) .idea/vcs.xml
+27) .idea/workspace.xml
+28) gradle/wrapper/gradle-wrapper.jar
+29) gradle/wrapper/gradle-wrapper.properties
+30) .idea/caches/deviceStreaming.xml
+31) .idea/inspectionProfiles/Project_Default.xml
+32) app/src/main/ic_launcher-playstore.png
+33) app/src/main/AndroidManifest.xml
+34) app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+35) app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+36) app/src/main/res/drawable/image.png
+37) app/src/main/res/drawable/ic_launcher_foreground_inset.xml
+38) app/src/main/res/drawable/splash_transparent.xml
+39) app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp
+40) app/src/main/res/mipmap-hdpi/ic_launcher.webp
+41) app/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+42) app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp
+43) app/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+44) app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+45) app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp
+46) app/src/main/res/mipmap-mdpi/ic_launcher.webp
+47) app/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+48) app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp
+49) app/src/main/res/mipmap-xhdpi/ic_launcher.webp
+50) app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+51) app/src/main/res/values/strings.xml
+52) app/src/main/res/values/themes.xml
+53) app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp
+54) app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+55) app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp
+56) app/src/main/res/values/ic_launcher_background.xml
+57) app/src/main/java/com/lapmaster/ActividadSplash.kt
+58) app/src/main/java/com/lapmaster/MainActivity.kt
+59) app/src/main/java/com/lapmaster/ProveedorGpsNativo.kt
+60) app/src/main/java/com/lapmaster/apis/ClimaApi.kt
+61) app/src/main/java/com/lapmaster/ui/screens/MenuScreen.kt
+62) app/src/main/java/com/lapmaster/ui/screens/GraphicsScreen.kt
+63) app/src/main/java/com/lapmaster/ui/screens/SectorsScreen.kt
+64) app/src/main/java/com/lapmaster/ui/screens/ClimaScreen.kt
+65) app/src/main/java/com/lapmaster/ui/screens/StopwatchScreen.kt
+66) app/src/main/java/com/lapmaster/ui/components/Cronometro.kt
+67) app/src/main/java/com/lapmaster/ui/components/BannerClima.kt
+68) app/src/main/java/com/lapmaster/ui/components/PantallaConAccionActiva.kt
+69) app/src/main/java/com/lapmaster/ui/components/TarjetaResumen.kt
+70) app/src/main/java/com/lapmaster/ui/theme/Colores.kt
+71) app/src/main/java/com/lapmaster/ui/theme/Tema.kt
+72) app/src/main/java/com/lapmaster/ui/viewmodels/MenuViewModel.kt
+73) app/src/main/java/com/lapmaster/ui/viewmodels/MenuActions.kt
+74) app/src/main/java/com/lapmaster/ui/viewmodels/GraficasActions.kt
+75) app/src/main/java/com/lapmaster/ui/viewmodels/GpsActions.kt
+76) app/src/main/java/com/lapmaster/ui/viewmodels/SectoresActions.kt
+77) app/src/main/java/com/lapmaster/ui/viewmodels/NavegacionActions.kt
+78) app/src/main/java/com/lapmaster/ui/viewmodels/StopwatchScreenViewModel.kt
+79) app/src/main/java/com/lapmaster/ui/viewmodels/VueltasActions.kt
+80) app/src/androidTest/java/com/lapmaster/ui/components/BannerClimaTest.kt
+81) app/src/main/java/com/lapmaster/ui/model/ModelosUi.kt
+82) app/src/main/java/com/lapmaster/ui/model/PaletaPilotos.kt
+
+DETALLE POR ARCHIVO
+================================================================================
+ARCHIVO: build.gradle
+TIPO: Gradle build script (Groovy)
+ROL: Configuracion global de plugins para el proyecto raiz.
+DETALLE (PASO A PASO):
+1) buildscript { repositories { google(), mavenCentral() } } define repositorios para plugins legacy.
+2) plugins { id("com.android.application") version "8.2.2" apply false } fija version de AGP.
+3) plugins { id("org.jetbrains.kotlin.android") version "1.9.10" apply false } fija version de Kotlin.
+4) apply false indica que los plugins se aplican en modulos, no en el root.
+DEPENDENCIAS / VERSIONES:
+- com.android.application: 8.2.2
+- org.jetbrains.kotlin.android: 1.9.10
+EFECTO:
+- Centraliza versiones de plugin para todos los modulos del proyecto.
+
+ARCHIVO: gradlew.bat
+TIPO: Script Windows (batch)
+ROL: Lanza el Gradle Wrapper en entornos Windows.
+DETALLE:
+- Invoca el wrapper con la version declarada en gradle/wrapper/gradle-wrapper.properties.
+- Permite ejecutar tareas Gradle sin instalar Gradle globalmente.
+
+ARCHIVO: gradlew
+TIPO: Script Unix (shell)
+ROL: Lanza el Gradle Wrapper en entornos Unix/Mac/Linux.
+DETALLE:
+- Descarga y ejecuta la distribucion de Gradle definida en el wrapper.
+- Hace posible ejecutar tareas del proyecto con ./gradlew.
+
+ARCHIVO: gradle.properties
+TIPO: Propiedades de Gradle
+ROL: Ajusta comportamiento del build y flags globales.
+DETALLE:
+- org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8: memoria y encoding.
+- android.useAndroidX=true: usa AndroidX.
+- android.enableJetifier=true: migra librerias legacy a AndroidX.
+- kotlin.code.style=official: estilo oficial de Kotlin.
+
+ARCHIVO: README.md
+TIPO: Markdown
+ROL: Documentacion principal del proyecto.
+DETALLE:
+- Describe objetivo: app Android (Compose) para tiempos de pista multi-piloto, clima/GPS y tema claro/oscuro.
+- Lista funcionalidades actuales y estructura/stack (Compose, Material3, MVVM).
+- Explica como correr (JDK 17, gradle, Android Studio).
+- Incluye roadmap con proximos pasos y referencias (Figma).
+
+ARCHIVO: local.properties
+TIPO: Propiedades locales (no versionado recomendado)
+ROL: Configuracion local del SDK y claves locales.
+DETALLE:
+- sdk.dir apunta a la ruta local del Android SDK (valor local).
+- OPEN_WEATHER_API_KEY definido localmente (valor REDACTED).
+- Usado por app/build.gradle para generar BuildConfig.OPEN_WEATHER_API_KEY.
+NOTA:
+- Contiene datos sensibles/locales; no deberia versionarse en repos publicos.
+
+ARCHIVO: settings.gradle
+TIPO: Gradle settings
+ROL: Define repositorios globales y modulos incluidos.
+DETALLE:
+1) pluginManagement { repositories } define Google/MavenCentral/GradlePluginPortal.
+2) dependencyResolutionManagement define repos de dependencias.
+3) rootProject.name = "LapMaster".
+4) include(":app") registra el modulo principal.
+
+ARCHIVO: .gitattributes
+TIPO: Git attributes
+ROL: Control de finales de linea.
+DETALLE:
+- * text=auto: Git normaliza line endings automaticamente.
+
+ARCHIVO: .idea/gradle.xml
+TIPO: Configuracion de Android Studio/IntelliJ
+ROL: Ajustes del proyecto Gradle en el IDE.
+DETALLE:
+- testRunner: CHOOSE_PER_TEST.
+- externalProjectPath: $PROJECT_DIR$.
+- gradleJvm: #GRADLE_LOCAL_JAVA_HOME.
+- modules: root y app incluidos.
+
+ARCHIVO: .idea/deviceManager.xml
+TIPO: Configuracion del IDE
+ROL: Preferencias de orden en la tabla de dispositivos.
+DETALLE:
+- Ordena la columna "Name" en forma ascendente.
+
+ARCHIVO: .idea/deploymentTargetSelector.xml
+TIPO: Configuracion del IDE
+ROL: Guarda el ultimo target de despliegue seleccionado.
+DETALLE:
+- selectionMode: DROPDOWN.
+- Guarda timestamp y el emulador/target usado (ruta local REDACTED).
+
+ARCHIVO: .idea/compiler.xml
+TIPO: Configuracion del IDE
+ROL: Nivel de bytecode para compilacion en IDE.
+DETALLE:
+- bytecodeTargetLevel target="21".
+NOTA:
+- El build de Gradle usa Java 17, pero el IDE apunta a bytecode 21.
+
+ARCHIVO: .idea/misc.xml
+TIPO: Configuracion del IDE
+ROL: Ajustes generales del proyecto.
+DETALLE:
+- ProjectRootManager languageLevel=JDK_21, jdk="jbr-21".
+- output url apunta a $PROJECT_DIR$/out.
+
+ARCHIVO: .idea/migrations.xml
+TIPO: Configuracion del IDE
+ROL: Marca migracion a Gradle local Java home.
+DETALLE:
+- Indica que el proyecto migro a GradleLocalJavaHome.
+
+ARCHIVO: .idea/markdown.xml
+TIPO: Configuracion del IDE
+ROL: Preferencia de preview Markdown.
+DETALLE:
+- Usa preview provider "Compose (experimental)".
+
+ARCHIVO: app/build.gradle
+TIPO: Gradle build script (modulo app)
+ROL: Configuracion del modulo Android principal.
+DETALLE (PASO A PASO):
+1) Importa Properties y lee local.properties si existe.
+2) Lee OPEN_WEATHER_API_KEY desde local.properties o variable de entorno.
+3) android { namespace "com.lapmaster", compileSdk 34 }.
+4) defaultConfig:
+   - applicationId "com.lapmaster".
+   - minSdk 24, targetSdk 34.
+   - versionCode 1, versionName "1.0.0-beta".
+   - testInstrumentationRunner androidx.test.runner.AndroidJUnitRunner.
+   - vectorDrawables.useSupportLibrary true.
+   - buildConfigField OPEN_WEATHER_API_KEY (string).
+5) buildTypes.release: minifyEnabled false y Proguard default + proguard-rules.pro.
+6) compileOptions: Java 17 (source/target).
+7) kotlinOptions: jvmTarget 17.
+8) buildFeatures: compose true, buildConfig true.
+9) composeOptions: kotlinCompilerExtensionVersion 1.5.3.
+10) packaging.resources excludes: /META-INF/AL2.0 y LGPL2.1.
+DEPENDENCIAS (con version):
+- androidx.core:core-ktx:1.12.0
+- androidx.activity:activity-compose:1.8.2
+- androidx.compose:compose-bom:2023.10.01 (platform)
+- androidx.compose.ui:ui (via BOM)
+- androidx.compose.ui:ui-tooling-preview (via BOM)
+- androidx.compose.material3:material3 (via BOM)
+- androidx.compose.material:material-icons-extended (via BOM)
+- androidx.lifecycle:lifecycle-runtime-ktx:2.6.2
+- androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2
+- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3
+- com.squareup.okhttp3:okhttp:4.11.0
+DEBUG ONLY:
+- androidx.compose.ui:ui-tooling (via BOM)
+- androidx.compose.ui:ui-test-manifest (via BOM)
+ANDROID TEST:
+- androidx.compose:compose-bom:2023.10.01 (platform)
+- androidx.compose.ui:ui-test-junit4 (via BOM)
+- androidx.test.ext:junit:1.1.5
+- androidx.test.espresso:espresso-core:3.5.1
+TEST:
+- junit:junit:4.13.2
+EFECTO EN RUNTIME:
+- BuildConfig.OPEN_WEATHER_API_KEY expone la clave al codigo Kotlin.
+- Compose y Material3 habilitados en el modulo.
+
+ARCHIVO: app/proguard-rules.pro
+TIPO: Proguard rules
+ROL: Reglas de ofuscacion/minify (release).
+DETALLE:
+- Comentario indica que no hay reglas y que el build beta no se achica.
+
+ARCHIVO: .vscode/settings.json
+TIPO: Configuracion VSCode
+ROL: Ajuste local del editor.
+DETALLE:
+- "java.configuration.updateBuildConfiguration": "disabled" evita actualizaciones automaticas de configuracion Java/Gradle.
+
+ARCHIVO: .idea/AndroidProjectSystem.xml
+TIPO: Configuracion del IDE
+ROL: Indica el sistema de proyecto Android usado.
+DETALLE:
+- providerId: com.android.tools.idea.GradleProjectSystem.
+
+ARCHIVO: .idea/.gitignore
+TIPO: Git ignore (solo para .idea)
+ROL: Evita versionar archivos de estado del IDE.
+DETALLE:
+- Ignora /shelf/ y /workspace.xml.
+
+ARCHIVO: .idea/androidTestResultsUserPreferences.xml
+TIPO: Configuracion del IDE
+ROL: Preferencias de visualizacion de resultados de tests.
+DETALLE:
+- Guarda anchos preferidos de columnas en la tabla de resultados.
+- Incluye dispositivos usados anteriormente (nombres y columnas).
+
+ARCHIVO: .idea/assetWizardSettings.xml
+TIPO: Configuracion del IDE
+ROL: Guarda estado del asistente de assets (iconos/imagenes).
+DETALLE:
+- Registra rutas locales usadas para iconos (REDacted).
+- Guarda color de background y densidad de preview.
+- Indica que se uso un foreground image (image.png) para launcher icon.
+
+ARCHIVO: .idea/icon.svg
+TIPO: SVG (vector)
+ROL: Icono del proyecto en el IDE.
+DETALLE:
+- Contiene paths vectoriales grandes con shapes y fill colors.
+- No se usa en runtime de la app; solo visual en IDE.
+
+ARCHIVO: .idea/studiobot.xml
+TIPO: Configuracion del IDE
+ROL: Preferencia de StudioBot.
+DETALLE:
+- shareContext=OptedIn.
+
+ARCHIVO: .idea/runConfigurations.xml
+TIPO: Configuracion del IDE
+ROL: Controla generadores de run configurations.
+DETALLE:
+- Ignora productores de run config para tests JUnit/Kotlin por defecto.
+
+ARCHIVO: .idea/vcs.xml
+TIPO: Configuracion del IDE
+ROL: Mapeo de VCS.
+DETALLE:
+- Asocia el root del proyecto a Git.
+
+ARCHIVO: .idea/workspace.xml
+TIPO: Configuracion del IDE (estado local)
+ROL: Guarda estado de ventanas, run configs, historiales, etc.
+DETALLE (ALTO NIVEL):
+- AutoImportSettings: autoReloadType=NONE.
+- ChangeListManager: lista de cambios local.
+- RunManager: configuracion de ejecucion "app" (Android App), opciones de deploy.
+- Git settings y GitHub PR settings (IDs/URLs locales).
+- RecentsManager y templates recientes.
+- Esta informacion es local y puede variar por usuario/maquina.
+
+ARCHIVO: gradle/wrapper/gradle-wrapper.jar
+TIPO: Binario (JAR)
+ROL: Bootstrap del Gradle Wrapper.
+DETALLE:
+- Ejecuta la descarga de la distribucion Gradle indicada.
+
+ARCHIVO: gradle/wrapper/gradle-wrapper.properties
+TIPO: Propiedades de wrapper
+ROL: Define la version de Gradle usada por el wrapper.
+DETALLE:
+- distributionUrl: gradle-9.0-milestone-1-bin.zip.
+- distributionBase/Path y zipStore definidos en GRADLE_USER_HOME.
+
+ARCHIVO: .idea/caches/deviceStreaming.xml
+TIPO: Configuracion del IDE
+ROL: Lista de dispositivos para device streaming.
+DETALLE:
+- Guarda un listado extenso de perfiles (brand, api, resolucion, densidad).
+- Se usa para seleccionar dispositivos remotos/virtuales.
+
+ARCHIVO: .idea/inspectionProfiles/Project_Default.xml
+TIPO: Inspecciones del IDE
+ROL: Configura reglas de inspeccion para el proyecto.
+DETALLE:
+- Desactiva AndroidLintTypographyOther y SpellChecking.
+- Activa inspecciones de Compose Preview (niveles WARNING/ERROR).
+- Desactiva UseExpressionBody.
+
+ARCHIVO: app/src/main/ic_launcher-playstore.png
+TIPO: PNG (binario)
+ROL: Icono para la ficha de Play Store.
+DETALLE:
+- Imagen a resolucion alta para publicacion.
+
+ARCHIVO: app/src/main/AndroidManifest.xml
+TIPO: Manifest Android (XML)
+ROL: Declara permisos, activities y configuracion de app.
+DETALLE (PASO A PASO):
+1) Permisos: ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, INTERNET, ACCESS_NETWORK_STATE.
+2) <application>:
+   - icon y roundIcon apuntan a mipmap.
+   - label usa @string/app_name.
+   - theme principal Theme.LapMaster.
+3) Activity launcher: .ActividadSplash (exported=true) con theme de splash y MAIN/LAUNCHER.
+4) Activity principal: .ActividadPrincipal (exported=false) con theme principal.
+
+ARCHIVO: app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+TIPO: Adaptive icon (XML)
+ROL: Icono principal adaptativo.
+DETALLE:
+- background: @color/ic_launcher_background.
+- foreground: @drawable/ic_launcher_foreground_inset.
+
+ARCHIVO: app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+TIPO: Adaptive icon (XML)
+ROL: Icono adaptativo redondo.
+DETALLE:
+- background: @color/ic_launcher_background.
+- foreground: @drawable/ic_launcher_foreground_inset.
+
+ARCHIVO: app/src/main/res/drawable/image.png
+TIPO: PNG (binario)
+ROL: Imagen central de la app.
+DETALLE:
+- Se usa en el splash screen (ActividadSplash) como imagen full-screen.
+- Se usa como foreground del icono adaptativo via ic_launcher_foreground_inset.xml.
+
+ARCHIVO: app/src/main/res/drawable/ic_launcher_foreground_inset.xml
+TIPO: Drawable XML
+ROL: Inset del foreground del icono.
+DETALLE:
+- Usa @drawable/image con inset=18dp.
+
+ARCHIVO: app/src/main/res/drawable/splash_transparent.xml
+TIPO: Vector XML
+ROL: Icono transparente para splash.
+DETALLE:
+- Vector 1x1 con fill transparente.
+- Usado por windowSplashScreenAnimatedIcon.
+
+ARCHIVO: app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp
+TIPO: WEBP (binario)
+ROL: Foreground del icono launcher, densidad hdpi.
+DETALLE:
+- Usado en icono adaptativo para hdpi.
+
+ARCHIVO: app/src/main/res/mipmap-hdpi/ic_launcher.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher hdpi.
+
+ARCHIVO: app/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher redondo hdpi.
+
+ARCHIVO: app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp
+TIPO: WEBP (binario)
+ROL: Foreground del icono launcher, densidad xxhdpi.
+
+ARCHIVO: app/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher xxhdpi.
+
+ARCHIVO: app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher redondo xxhdpi.
+
+ARCHIVO: app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp
+TIPO: WEBP (binario)
+ROL: Foreground del icono launcher, densidad mdpi.
+
+ARCHIVO: app/src/main/res/mipmap-mdpi/ic_launcher.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher mdpi.
+
+ARCHIVO: app/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher redondo mdpi.
+
+ARCHIVO: app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp
+TIPO: WEBP (binario)
+ROL: Foreground del icono launcher, densidad xhdpi.
+
+ARCHIVO: app/src/main/res/mipmap-xhdpi/ic_launcher.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher xhdpi.
+
+ARCHIVO: app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher redondo xhdpi.
+
+ARCHIVO: app/src/main/res/values/strings.xml
+TIPO: Recursos de texto (XML)
+ROL: Strings base de la app.
+DETALLE:
+- app_name = "LapMaster".
+
+ARCHIVO: app/src/main/res/values/themes.xml
+TIPO: Recursos de tema (XML)
+ROL: Temas base de la app y splash.
+DETALLE:
+- Theme.LapMaster: Theme.Material.Light.NoActionBar y statusBarColor transparente.
+- Theme.LapMaster.Splash: fondo blanco, icono animado transparente, background icon transparente.
+
+ARCHIVO: app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp
+TIPO: WEBP (binario)
+ROL: Foreground del icono launcher, densidad xxxhdpi.
+
+ARCHIVO: app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher xxxhdpi.
+
+ARCHIVO: app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp
+TIPO: WEBP (binario)
+ROL: Icono launcher redondo xxxhdpi.
+
+ARCHIVO: app/src/main/res/values/ic_launcher_background.xml
+TIPO: Recursos de color (XML)
+ROL: Color de fondo del icono adaptativo.
+DETALLE:
+- ic_launcher_background = #3D8ADC.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ActividadSplash.kt
+TIPO: Kotlin (Activity)
+ROL: Pantalla de splash con transicion a la actividad principal.
+DETALLE (PASO A PASO):
+1) onCreate: WindowCompat.setDecorFitsSystemWindows(window, false) para pantalla completa.
+2) setContent con Compose.
+3) LaunchedEffect(Unit): espera 900 ms, inicia ActividadPrincipal y finaliza la splash.
+4) UI: Box centrado con Image (R.drawable.image) que ocupa toda la pantalla.
+
+ARCHIVO: app/src/main/java/com/lapmaster/MainActivity.kt
+TIPO: Kotlin (Activity + Compose)
+ROL: Activity principal y navegacion por pantallas.
+DETALLE (PASO A PASO):
+1) data class ElementoNavegacion: encapsula Pantalla, etiqueta e icono.
+2) class ActividadPrincipal:
+   - Instancia ModeloVistaLapMaster via viewModels.
+   - Gestiona ProveedorGpsNativo y sensores de rotacion.
+   - Define permisos de ubicacion y ActivityResult para solicitarlos.
+3) onCreate:
+   - Ajusta WindowInsets y status bar.
+   - setContent { AplicacionLapMaster(modeloVista) }.
+   - Inicializa proveedor GPS y sensor brujula.
+4) onStart: solicita permiso GPS si es necesario.
+5) onResume/onPause: registra o desregistra listener del sensor.
+6) inicializarProveedorGps:
+   - Crea ProveedorGpsNativo con callback a modeloVista.gps.alActualizarEstadoGps.
+7) solicitarPermisoGpsSiEsNecesario:
+   - Si hay permiso, inicia GPS; si no, lanza request.
+8) Sensor:
+   - listenerBrjula procesa Sensor.TYPE_ROTATION_VECTOR.
+   - Obtiene matriz de rotacion, ajusta por orientacion de pantalla.
+   - Calcula azimut y actualiza rumbo en el ViewModel.
+9) ajustarMatrizPorRotacionPantalla: remapea ejes segun Surface.ROTATION_90/180/270.
+10) obtenerRotacionPantalla: API >= R usa display.rotation; si no, windowManager.
+11) @Composable AplicacionLapMaster:
+   - Observa estadoUi con collectAsState.
+   - Determina accionActiva (cronometros o sectores activos).
+   - Define lista de pantallas y pager state.
+   - LaunchedEffect: sincroniza pagina con estado de navegacion.
+   - Oculta barra superior si horizontal + en tiempos + cronometro activo.
+   - PantallaConAccionActiva(activo) mantiene pantalla encendida.
+   - TemaLapMaster aplica tema claro/oscuro.
+   - Scaffold + HorizontalPager renderiza PantallaMenu, PantallaClima, PantallaVueltas, PantallaSectores, PantallaGraficas.
+12) @Composable BarraMenuSuperior:
+   - TabRow con 5 tabs y un indicador verde.
+   - Ajusta tamanos segun orientacion.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ProveedorGpsNativo.kt
+TIPO: Kotlin (servicio de ubicacion)
+ROL: Proveedor simple de GPS basado en LocationManager.
+DETALLE (PASO A PASO):
+1) Implementa DefaultLifecycleObserver para iniciar/detener en resume/pause.
+2) locationManager obtiene LocationManager del sistema.
+3) listener:
+   - onLocationChanged: transforma Location -> GpsUi y llama onGpsUpdate.
+   - onProviderEnabled: reinicia si no escuchaba.
+   - onProviderDisabled: si GPS y NETWORK estan off, marca fijacion falsa.
+4) init: se registra como observer del lifecycle.
+5) tienePermisoUbicacion: verifica permisos FINE o COARSE.
+6) iniciarSiPermiso:
+   - Si ya escucha o no hay permiso, no hace nada.
+   - requestLocationUpdates para GPS y NETWORK con intervalos.
+   - Intenta getLastKnownLocation para propagar inmediatamente.
+7) detener: removeUpdates y marca escuchando=false.
+CONSTANTES:
+- INTERVALO_MS = 1500 ms, DISTANCIA_MIN_METROS = 1m.
+
+ARCHIVO: app/src/main/java/com/lapmaster/apis/ClimaApi.kt
+TIPO: Kotlin (API HTTP)
+ROL: Consulta clima via OpenWeather y parsea JSON.
+DETALLE (PASO A PASO):
+1) data class RespuestaClima: estructura de respuesta procesada.
+2) class ClimaApi:
+   - OkHttpClient por defecto.
+   - Cachea ultimo resultado por 60s (ultimaConsultaMs, ultimoResultado).
+3) obtenerClima(lat, lon, lang):
+   - Si el intervalo minimo no paso, devuelve cache.
+   - Lee BuildConfig.OPEN_WEATHER_API_KEY; si falta, error.
+   - Construye URL (units=metric, lang).
+   - Ejecuta request y procesa respuesta.
+   - Si HTTP !successful: intenta leer "message" del JSON.
+   - Parsea main/weather/wind/rain/clouds.
+   - Convierte a tipos y valida NaN.
+   - Guarda en cache y retorna ResultadoClima.Ok.
+   - Catch Exception: devuelve ResultadoClima.Error.
+4) sealed class ResultadoClima: Ok(datos) o Error(mensaje).
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/screens/MenuScreen.kt
+TIPO: Kotlin (Compose UI)
+ROL: Pantalla de menu, pilotos y configuraciones rapidas.
+DETALLE (PASO A PASO):
+1) Constantes SharedPreferences para "primer uso" (versionado).
+2) PantallaMenu:
+   - Lee SharedPreferences y decide si mostrar dialogo de primer uso.
+   - Usa BoxWithConstraints para modo compacto.
+   - Renderiza: dialogo primer uso, botones de acciones, lista de pilotos, fila de configuraciones.
+3) PrimerUsoDialog:
+   - Dialog a ancho completo, Card con secciones.
+   - Lista bullet con resumen de features actuales.
+   - Seccion de "Proximos pasos" y boton "Listo".
+4) deberiaMostrarPrimerUso:
+   - Guarda version y flag de primer uso en prefs.
+5) BotonMenu: boton general para acciones del menu.
+6) ListaPilotos:
+   - Ordena pilotos (confirmados al final) y renderiza EditorPiloto.
+   - Boton para agregar piloto (max 4).
+7) EditorPiloto:
+   - Permite editar nombre/numero/color.
+   - Estado de "Confirmar" o "Editar" segun confirmacion.
+   - Si no edita, muestra texto y habilita click para editar.
+   - Si edita, muestra chips de color.
+8) ChipColorPiloto: muestra color y borde si seleccionado.
+9) FilaConfiguraciones:
+   - Switch de tema claro/oscuro.
+   - Switch de preferencia mano (diestro/zurdo) con texto placeholder.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/screens/GraphicsScreen.kt
+TIPO: Kotlin (Compose UI)
+ROL: Grafico de vueltas y historial por tandas.
+DETALLE (PASO A PASO):
+1) PantallaGraficas:
+   - Selecciona tanda activa/seleccionada.
+   - Si no hay tandas, muestra mensaje.
+   - TabRow para elegir tanda.
+   - Card principal: grafica (o placeholder) + leyenda.
+   - ListaHistorial al final.
+2) Leyenda: lista de pilotos con color.
+3) ListaHistorial:
+   - Muestra entradas de historial con mejor vuelta y cantidad.
+4) GraficaLineas:
+   - Calcula min/max y padding.
+   - Dibuja rejilla horizontal y vertical.
+   - Dibuja lineas y puntos por serie.
+5) formatearTiempoGrafica:
+   - Convierte segundos a mm:ss.d o s.d.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/screens/SectorsScreen.kt
+TIPO: Kotlin (Compose UI)
+ROL: Pantalla de sectores con cronometraje y resumen.
+DETALLE (PASO A PASO):
+1) PantallaSectores:
+   - Determina modo compacto segun altura.
+   - Calcula alturas de barra, cronos, historial y resumen.
+   - LaunchedEffect: si hay piloto y no hay inicio, inicia cronometro.
+   - Header: nombre piloto, ultimo tiempo y botones Pausar/Reiniciar.
+   - Botones de sectores (3) con estado (Iniciar/Marcar/Pausado/etc).
+   - BarraSectores proporcional.
+   - Cronometros por sector y total si completos.
+   - Historial y Resumen si hay datos.
+2) SectorBoton:
+   - Boton con color de sector y estado textual.
+3) BarraSectores:
+   - Distribuye pesos por tiempos (min 5%).
+4) HistorialSectores:
+   - Tabla de vueltas con tiempos por sector y total.
+5) ResumenSectores:
+   - Promedio, desviacion media, mejor y cantidad de vueltas.
+6) formatearTiempo:
+   - Convierte ms a mm:ss.mmm o placeholder.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/screens/ClimaScreen.kt
+TIPO: Kotlin (Compose UI)
+ROL: Pantalla full-screen para BannerClima.
+DETALLE:
+- Obtiene orientacion actual.
+- Llama BannerClima con pantallaCompleta=true y rumbo del GPS.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/screens/StopwatchScreen.kt
+TIPO: Kotlin (Compose UI)
+ROL: Pantalla de cronometros por piloto (vueltas).
+DETALLE (PASO A PASO):
+1) PantallaVueltas:
+   - Calcula layout segun orientacion y altura.
+   - En horizontal, muestra grilla de 2 columnas.
+   - En vertical, muestra lista de tarjetas.
+   - Bottom bar con boton "Terminar tanda" y opcional "Volver al menu".
+2) TarjetaVueltaPiloto:
+   - Ajusta tamanos segun modo compacto/ultra compacto.
+   - Determina layout vertical si ancho reducido.
+   - Boton principal: Iniciar o Marcar vuelta.
+   - Cronometro muestra tiempo actual.
+   - Boton de pausa/continuar.
+   - Orden de boton/tiempo cambia segun preferencia de mano.
+NOTA:
+- alResetearCronometro se recibe pero no se usa en esta UI.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/components/Cronometro.kt
+TIPO: Kotlin (Compose UI)
+ROL: Componente de tarjeta de tiempo con formato.
+DETALLE:
+- Renderiza Card con fondo configurable y texto en monospace.
+- formatearTiempo convierte ms a mm:ss.mmm o placeholder.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/components/BannerClima.kt
+TIPO: Kotlin (Compose UI)
+ROL: Vista principal de clima y estado GPS.
+DETALLE (PASO A PASO):
+1) BannerClima:
+   - Decide colores base segun tema y pantalla completa.
+   - Construye metricas (humedad, altitud, viento, presion, nubosidad).
+   - Layout distinto para horizontal/vertical.
+2) SeccionHeroClima:
+   - Encabezado con ubicacion/condicion.
+   - Temperatura y sensacion.
+3) EncabezadoClima:
+   - Icono de ubicacion + textos.
+4) TemperaturaActual:
+   - Muestra temperatura y sensacion con tipografia monoespaciada.
+5) BrujulaViento:
+   - Anima rotacion hacia grados del viento.
+   - Calcula vector relativo al rumbo del dispositivo.
+   - Dibuja circulos y flecha en Canvas.
+6) MetricaClimaColumna / MetricaClima:
+   - Cards con icono, etiqueta y valor.
+7) EstadoGps:
+   - Banner con color verde/rojo y precision.
+8) Helpers:
+   - calcularVectorRelativo y normalizarGrados.
+   - vientoVelocidadTexto devuelve placeholder si vacio.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/components/PantallaConAccionActiva.kt
+TIPO: Kotlin (Compose UI)
+ROL: Mantiene pantalla encendida cuando hay accion activa.
+DETALLE:
+- Usa DisposableEffect para set keepScreenOn y flags del Window.
+- findActivity recorre ContextWrapper hasta Activity.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/components/TarjetaResumen.kt
+TIPO: Kotlin (Compose UI)
+ROL: Tarjeta con resumen de sesion.
+DETALLE:
+- Muestra 5 metricas (mejor vuelta, promedio, vueltas, mejor dia, promedio dia).
+- ChipResumen aplica color y borde.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/theme/Colores.kt
+TIPO: Kotlin (tema)
+ROL: Paleta de colores de marca y graficas.
+DETALLE:
+- Define colores como Color(0xFF...).
+- Incluye: VerdeCarreras, RojoCarreras, AmarilloCarreras, CianCarreras, etc.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/theme/Tema.kt
+TIPO: Kotlin (tema)
+ROL: Define tema claro/oscuro y tipografias.
+DETALLE:
+- Esquema claro y oscuro con colores principales.
+- Tipografia: Serif para display/titles, SansSerif para body/labels.
+- TemaLapMaster aplica colorScheme, typography y shapes.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/viewmodels/MenuViewModel.kt
+TIPO: Kotlin (ViewModel)
+ROL: Estado global y coordinacion de acciones (MVVM).
+DETALLE (PASO A PASO):
+1) Crea pilotos iniciales y tanda inicial.
+2) Define estadoInicial (pantalla MENU, estados de vueltas/sectores/graficas/clima/gps/resumen/config).
+3) MutableStateFlow _estadoUi con EstadoAplicacionUi.
+4) Constantes tickIntervalMs=10 y idleIntervalMs=200.
+5) Instancia ClimaApi.
+6) Crea acciones: NavegacionActions, MenuActions, VueltasActions, SectoresActions, GraficasActions, GpsActions.
+7) init: llama iniciarTickerCronometros.
+8) cargarClima:
+   - Llama ClimaApi.obtenerClima en Dispatchers.IO.
+   - Convierte unidades a strings locales (km/h, hPa, km).
+   - Actualiza estado.clima con datos o con error.
+9) iniciarTickerCronometros:
+   - Loop infinito en Dispatchers.Default.
+   - Si hay cronos activos, actualiza tiempos con SystemClock.
+10) convertirAGradosCardinal: convierte grados a N/NE/E/SE/S/SO/O/NO.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/viewmodels/MenuActions.kt
+TIPO: Kotlin (acciones)
+ROL: Cambios de estado de menu, pilotos y configuracion.
+DETALLE (PASO A PASO):
+1) alAlternarTema: invierte temaOscuro.
+2) alAlternarPreferenciaMano: alterna DIESTRO/ZURDO.
+3) alAgregarPiloto:
+   - Limita a 4 pilotos.
+   - Busca primer id libre.
+   - Asigna color desde paleta.
+   - Agrega piloto con nombre/numero base.
+4) alActualizarPilotoNombre/Numero/Color: actualiza campos.
+5) alConfirmarPiloto: marca confirmado si nombre no vacio.
+6) alEliminarPiloto: elimina y sincroniza estados.
+7) actualizarPilotosEnEstado:
+   - Sincroniza lista de pilotos con vueltas, sectores y graficas.
+   - Mantiene max 4 pilotos.
+8) sincronizarTandaActiva:
+   - Actualiza series de graficas con nombre/color segun pilotos.
+NOTA:
+- Recibe siguienteId pero no se usa; se calcula id libre internamente.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/viewmodels/GraficasActions.kt
+TIPO: Kotlin (acciones)
+ROL: Acciones de graficas.
+DETALLE:
+- alSeleccionarTanda: si la tanda existe, actualiza tandaSeleccionadaId.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/viewmodels/GpsActions.kt
+TIPO: Kotlin (acciones)
+ROL: Actualiza estado GPS y dispara carga de clima.
+DETALLE (PASO A PASO):
+1) alActualizarEstadoGps:
+   - Actualiza estado.gps (fijacion, precision, coords).
+   - Si no hay fijacion, resetea datos de clima a placeholders.
+   - Si hay fijacion y coords, evalua si se debe actualizar clima.
+2) alActualizarRumbo:
+   - Normaliza grados a 0..360 y actualiza gps.rumboGrados.
+3) debeActualizarClima:
+   - Controla intervalo minimo (120s) y distancia minima (200m).
+4) distanciaMetros:
+   - Usa formula Haversine.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/viewmodels/SectoresActions.kt
+TIPO: Kotlin (acciones)
+ROL: Controla cronometro por sectores y su historial.
+DETALLE (PASO A PASO):
+1) alSeleccionarPiloto: actualiza piloto activo para sectores.
+2) alIniciarCronometro:
+   - Si no hay inicio y hay sectores pendientes, inicia en SystemClock.
+3) alMarcarSector:
+   - Solo permite marcar el siguiente sector y si no esta en pausa.
+   - Calcula delta por sector, actualiza tiempos.
+   - Si completa todos, guarda historial y reinicia sectores.
+4) alAlternarPausa:
+   - Si pausa: guarda tiempoActualMs.
+   - Si reanuda: recalcula inicioSistemaMs.
+5) alReiniciarSectores:
+   - Resetea tiempos, historial y estado.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/viewmodels/NavegacionActions.kt
+TIPO: Kotlin (acciones)
+ROL: Cambia la pantalla seleccionada.
+DETALLE:
+- alSeleccionarPantalla: actualiza estado.pantallaSeleccionada.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/viewmodels/StopwatchScreenViewModel.kt
+TIPO: Kotlin
+ROL: Placeholder sin contenido.
+DETALLE:
+- Archivo vacio con solo package; no hay logica.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/viewmodels/VueltasActions.kt
+TIPO: Kotlin (acciones)
+ROL: Controla cronometros por piloto y graficas.
+DETALLE (PASO A PASO):
+1) alAlternarCronometro:
+   - Si estaba corriendo, acumula tiempo y detiene.
+   - Si estaba detenido, inicia con timestamp.
+2) alMarcarVuelta:
+   - Si no corria, inicia.
+   - Si corria, calcula tiempo, incrementa vueltas y resetea tiempo.
+   - Actualiza serie de graficas con el tiempo de vuelta.
+3) alResetearCronometro:
+   - Resetea tiempo, estado corriendo y vueltas.
+   - Limpia serie de graficas del piloto.
+4) alTerminarTanda:
+   - Si la tanda tiene vueltas, la finaliza y crea una nueva.
+   - Guarda entrada en historial.
+   - Resetea cronometros de pilotos.
+5) actualizarTandaConVuelta:
+   - Actualiza la serie del piloto en la tanda activa.
+6) limpiarVueltasPiloto:
+   - Vacia la serie del piloto en la tanda activa.
+7) construirEntradaHistorial:
+   - Calcula mejor vuelta y total de vueltas.
+8) formatearTiempoMs:
+   - Convierte ms a mm:ss.mmm o placeholder.
+
+ARCHIVO: app/src/androidTest/java/com/lapmaster/ui/components/BannerClimaTest.kt
+TIPO: Kotlin (Android UI Test)
+ROL: Pruebas del componente BannerClima.
+DETALLE:
+- Usa createAndroidComposeRule<ComponentActivity>().
+- Test 1: muestra humedad real cuando GPS tiene fijacion.
+- Test 2: muestra placeholder cuando GPS esta off.
+- Test 3: valida textos clave (ubicacion, condicion, temp, presion, etc).
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/model/ModelosUi.kt
+TIPO: Kotlin (modelos)
+ROL: Modelos de estado para UI y dominio.
+DETALLE:
+- PilotoUi: id, nombre, numero, color (ARGB), confirmado.
+- VueltaPilotoUi: piloto, tiempo, corriendo, inicioSistemaMs, vueltas.
+- AccionMenuUi, SectorUi, VueltaSectoresUi, SerieGraficaUi, TandaUi, EntradaHistorialUi.
+- ClimaUi: strings formateadas para UI.
+- GpsUi: datos de GPS y rumbo.
+- ResumenUi: resumen de sesion/dia.
+- PreferenciaMano / PreferenciaOrientacion enums.
+- EstadoConfiguracionUi, EstadoVueltasUi, EstadoMenuUi, EstadoSectoresUi, EstadoGraficasUi.
+- EstadoAplicacionUi: estado global con pantalla seleccionada.
+- Pantalla enum: VUELTAS, MENU, SECTORES, CLIMA, GRAFICAS.
+- Extension nombreParaGrafica: agrega numero al nombre.
+- crearTandaUi: crea series por piloto con nombre y color.
+
+ARCHIVO: app/src/main/java/com/lapmaster/ui/model/PaletaPilotos.kt
+TIPO: Kotlin (constantes)
+ROL: Paleta de colores para pilotos.
+DETALLE:
+- Lista de colores ARGB Long inspirados en marcas de karting (green, blue, red, etc).
+
